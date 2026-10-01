@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include "pluginmanager.h"
+#include "sen_bridge_controller.h"
 
 class HmiState final : public QObject {
   Q_OBJECT
@@ -45,10 +46,16 @@ int main(int argc, char *argv[]) {
   }
 
   HmiState hmiState;
+  SenBridgeController senBridgeController;
+  QObject::connect(&senBridgeController, &SenBridgeController::connectionEstablished,
+                   &hmiState, &HmiState::notifySenObjectReceived);
+
   QQmlApplicationEngine engine;
   engine.rootContext()->setContextProperty("hmiState", &hmiState);
   engine.rootContext()->setContextProperty("pluginManager", &pluginManager);
+  engine.rootContext()->setContextProperty("senBridge", &senBridgeController);
   engine.loadFromModule("SenXplaneHmi", "Main");
+
 
 
   if (engine.rootObjects().isEmpty()) {

@@ -17,6 +17,11 @@ ApplicationWindow {
         Menu {
             title: "File"
             MenuItem {
+                text: "Connect to Sen"
+                onTriggered: senBridge.connectToSen()
+            }
+            MenuSeparator {}
+            MenuItem {
                 text: "Exit"
                 onTriggered: Qt.quit()
             }
