@@ -1,8 +1,11 @@
+#include <QDir>
 #include <QGuiApplication>
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QTimer>
+
+#include "pluginmanager.h"
 
 class HmiState final : public QObject {
   Q_OBJECT
@@ -33,16 +36,26 @@ int main(int argc, char *argv[]) {
   QGuiApplication application(argc, argv);
   QGuiApplication::setApplicationName("Sen X-Plane HMI");
 
+  const QString pluginDirectory =
+      QDir(QCoreApplication::applicationDirPath()).filePath("plugins");
+  PluginManager pluginManager(pluginDirectory);
+  const bool smokeTest = application.arguments().contains("--smoke-test");
+  if (smokeTest && !pluginManager.hasPlugin("x-plane-aircraft")) {
+    return EXIT_FAILURE;
+  }
+
   HmiState hmiState;
   QQmlApplicationEngine engine;
   engine.rootContext()->setContextProperty("hmiState", &hmiState);
+  engine.rootContext()->setContextProperty("pluginManager", &pluginManager);
   engine.loadFromModule("SenXplaneHmi", "Main");
+
 
   if (engine.rootObjects().isEmpty()) {
     return EXIT_FAILURE;
   }
 
-  if (application.arguments().contains("--smoke-test")) {
+  if (smokeTest) {
     QTimer::singleShot(5000, &application,
                        [&application] { application.quit(); });
   }

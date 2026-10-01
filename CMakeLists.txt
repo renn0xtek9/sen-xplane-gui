@@ -14,6 +14,9 @@ qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(sen-xplane-hmi
     app/main.cpp
+    app/pluginmanager.cpp
+    app/pluginmanager.h
+    app/plugininterface.h
 )
 
 qt_add_qml_module(sen-xplane-hmi
@@ -24,6 +27,9 @@ qt_add_qml_module(sen-xplane-hmi
 )
 
 target_link_libraries(sen-xplane-hmi PRIVATE Qt6::Quick)
+
+add_subdirectory(plugins/x-plane-aircraft/user-interface)
+add_dependencies(sen-xplane-hmi x-plane-aircraft)
 
 if(BUILD_TESTING)
     add_subdirectory(app/test)

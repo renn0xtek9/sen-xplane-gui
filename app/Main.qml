@@ -13,34 +13,6 @@ ApplicationWindow {
     title: "Sen X-Plane HMI"
     color: "#101b1c"
 
-    ListModel {
-        id: panelModel
-
-        ListElement {
-            title: "Aircraft"
-            shown: true
-        }
-        ListElement {
-            title: "Map"
-            shown: true
-        }
-    }
-
-    ListModel {
-        id: pluginModel
-
-        ListElement {
-            name: "X-Plane aircraft"
-            description: "Aircraft telemetry will appear here when the bridge is connected."
-            active: true
-        }
-        ListElement {
-            name: "OpenStreetMap"
-            description: "The aircraft's position on the map will appear here."
-            active: true
-        }
-    }
-
     menuBar: MenuBar {
         Menu {
             title: "File"
@@ -53,17 +25,17 @@ ApplicationWindow {
         Menu {
             title: "View"
             Repeater {
-                model: panelModel
+                model: pluginManager.plugins
 
                 delegate: MenuItem {
-                    required property string title
-                    required property bool shown
-                    required property int index
+                    required property string pluginId
+                    required property string panelTitle
+                    required property bool panelVisible
 
-                    text: title
+                    text: panelTitle
                     checkable: true
-                    checked: shown
-                    onTriggered: panelModel.setProperty(index, "shown", checked)
+                    checked: panelVisible
+                    onTriggered: pluginManager.setPanelVisible(pluginId, checked)
                 }
             }
         }
@@ -71,17 +43,17 @@ ApplicationWindow {
         Menu {
             title: "Plugin"
             Repeater {
-                model: pluginModel
+                model: pluginManager.plugins
 
                 delegate: MenuItem {
-                    required property string name
-                    required property bool active
-                    required property int index
+                    required property string pluginId
+                    required property string pluginName
+                    required property bool pluginActive
 
-                    text: name
+                    text: pluginName
                     checkable: true
-                    checked: active
-                    onTriggered: pluginModel.setProperty(index, "active", checked)
+                    checked: pluginActive
+                    onTriggered: pluginManager.setPluginActive(pluginId, checked)
                 }
             }
         }
@@ -93,59 +65,22 @@ ApplicationWindow {
         spacing: 16
 
         Repeater {
-            model: panelModel
+            model: pluginManager.plugins
 
-            delegate: Rectangle {
-                required property string title
-                required property bool shown
-                required property int index
+            delegate: Loader {
+                required property string pluginId
+                required property bool pluginActive
+                required property bool panelVisible
+                required property url panelSource
+                required property var backend
 
-                visible: shown && pluginModel.get(index).active
+                active: pluginActive && panelVisible
+                visible: active
+                source: panelSource
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.minimumWidth: 300
-                radius: 6
-                color: index === 0 ? "#182829" : "#1c2924"
-                border.color: index === 0 ? "#345454" : "#405c49"
-                border.width: 1
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 28
-                    spacing: 12
-
-                    Label {
-                        text: title
-                        color: "#e7f0e8"
-                        font.pixelSize: 24
-                        font.weight: Font.DemiBold
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: 1
-                        color: "#354747"
-                    }
-
-                    Label {
-                        Layout.fillWidth: true
-                        text: pluginModel.get(index).description
-                        color: "#9eb3aa"
-                        font.pixelSize: 16
-                        wrapMode: Text.WordWrap
-                    }
-
-                    Item {
-                        Layout.fillHeight: true
-                    }
-
-                    Label {
-                        text: index === 0 ? "ALTITUDE     --     SPEED     --" : "POSITION     --"
-                        color: "#75d3ad"
-                        font.family: "monospace"
-                        font.pixelSize: 16
-                    }
-                }
+                onLoaded: item.backend = backend
             }
         }
     }

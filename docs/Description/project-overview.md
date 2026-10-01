@@ -11,6 +11,7 @@ On top of that there is a view of an openstreetmap view of the area where the ai
 - "SDK" the SDK is a package that contains the basic application code a library that enable compiling a "Plugin" 
 - "Plugin" is a standalone package that contains a "UI" part and a "Middleware integration" part
     - it can be compiled using the "SDK" package. 
+- "Backend" is the c++ part of a "Plugin" containing business logic only.
 - "Panel" is a rectangular window that displays informations (for instance aircraft information or openstreetmap view)
 
 ## "HMI" description

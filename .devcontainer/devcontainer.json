@@ -7,6 +7,18 @@
     "runArgs": [
         "--network=host"
     ],
+    "mounts": [
+        "source=/mnt/wslg,target=/mnt/wslg,type=bind",
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+    ],
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
+        "PULSE_SERVER": "unix:/mnt/wslg/PulseServer",
+        "QT_QPA_PLATFORM": "xcb",
+        "QT_QUICK_BACKEND": "software"
+    },
     "remoteUser": "ubuntu",
     "updateRemoteUserUID": true,
     "customizations": {
