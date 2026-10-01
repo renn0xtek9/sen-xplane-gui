@@ -1,0 +1,64 @@
+#include "sen_bridge_controller.h"
+
+#include <memory>
+#include <thread>
+
+#include <sen/kernel/kernel.h>
+
+#include "hmi_sen_bridge.h"
+
+class SenBridgeController::SenBridgeControllerPrivate {
+public:
+  explicit SenBridgeControllerPrivate(SenBridgeController *q)
+      : q(q) {}
+
+  bool connected = false;
+  std::unique_ptr<sen::kernel::Kernel> kernel;
+  std::thread bridgeThread;
+
+  SenBridgeController *q;
+
+  void stop() {
+    if (kernel != nullptr) {
+      kernel->requestStop();
+      kernel.reset();
+    }
+
+    if (bridgeThread.joinable()) {
+      bridgeThread.join();
+    }
+  }
+};
+
+SenBridgeController::SenBridgeController(QObject *parent)
+    : QObject(parent), d(std::make_unique<SenBridgeControllerPrivate>(this)) {}
+
+SenBridgeController::~SenBridgeController() { stop(); }
+
+bool SenBridgeController::connected() const { return d->connected; }
+
+void SenBridgeController::connectToSen() {
+  if (d->connected || d->bridgeThread.joinable()) {
+    return;
+  }
+
+  d->bridgeThread = std::thread([this]() {
+    sen::kernel::KernelConfig config;
+    auto *component = new HmiSenBridge();
+    config.addToLoad(sen::kernel::KernelConfig::ComponentToLoad{{component}, {}, {}});
+    d->kernel = std::make_unique<sen::kernel::Kernel>(config);
+    const int runResult = d->kernel->run(sen::kernel::KernelBlockMode::doNotBlock);
+    if (runResult != 0) {
+      d->connected = false;
+      emit connectedChanged();
+    }
+  });
+
+  d->connected = true;
+  emit connectedChanged();
+  emit connectionEstablished();
+}
+
+void SenBridgeController::stop() { d->stop(); }
+
+#include "sen_bridge_controller.moc"
