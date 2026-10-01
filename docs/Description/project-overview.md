@@ -46,6 +46,7 @@ The project is structured as a monolitical CMake project with
 - a "conan" subfolder containing conan profiles required for this project
 - an "app" subfolder for the main application itself 
 - a "lib" subfolder for the libraries of the main application 
+    - each library as an "include" subfolder wich itself has as sufolder named "hmi" where public headers of the libraries ares stored. This is done so that when including, files are prefixed with hmi. i.e. `#include "hmi/lib_header.h"`
 - a "middleware-integration" subfolder for the libraries related to the integration and connection with the Sen middleware
 - a "plugins" subfolder containting plugins. In our case there will be two plugins:
   - an "x-plane-aircraft" plugin to connect to X-Plane and receive data from it
@@ -56,6 +57,8 @@ The project is structured as a monolitical CMake project with
 - all "middelware-integration" subfolder consist of a 
     - "interfaces" subfolder containing Sen's ".stl" files that describe the interfaces on the SEN middleware
     - "lib" subfolder containing the actual implementation of the sen object.
+    - "fake" subfolder that will implement fake nodes and services sending fake data for testing purposes.
+    - "test" subfolder that will contains unit test and integration test of the middelware integration itself.
 
 ## HMI Software architecture
 The HMI consist of a main apllication written in c++ and Qt/QML 6.
