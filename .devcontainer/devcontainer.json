@@ -8,6 +8,7 @@
         "--network=host"
     ],
     "mounts": [
+        "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/ubuntu/.ssh,readonly",
         "source=/mnt/wslg,target=/mnt/wslg,type=bind",
         "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
     ],
