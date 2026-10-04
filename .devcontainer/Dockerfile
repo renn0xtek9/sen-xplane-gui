@@ -4,9 +4,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/opt/cmake/bin:/home/ubuntu/.local/bin:${PATH}"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash-completion \
     build-essential \
     ca-certificates \
     clang-format \
+    clangd \
     curl \
     gdb \
     git \
@@ -75,7 +77,11 @@ ENV LD_LIBRARY_PATH="${SEN_PREFIX}/lib:${SEN_PREFIX}/bin"
 
 RUN usermod -aG sudo ubuntu \
     && echo 'ubuntu ALL=(root) NOPASSWD:ALL' > /etc/sudoers.d/ubuntu \
-    && chmod 0440 /etc/sudoers.d/ubuntu
+    && chmod 0440 /etc/sudoers.d/ubuntu \
+    && mkdir -p /home/ubuntu/.local/share/bash-completion/completions \
+    && chown -R ubuntu:ubuntu /home/ubuntu/.local \
+    && echo "if [ -f /usr/share/bash-completion/bash_completion ]; then . /usr/share/bash-completion/bash_completion; fi" >> /home/ubuntu/.bashrc \
+    && echo "source /usr/share/bash-completion/completions/git 2>/dev/null || true" >> /home/ubuntu/.bashrc
 
 WORKDIR /workspaces/sen-xplane-gui
 USER ubuntu

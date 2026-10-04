@@ -24,7 +24,10 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "Elan8.spec42"
+                "Elan8.spec42",
+                "llvm-vs-code-extensions.vscode-clangd",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.cpptools"
             ]
         }
     }
