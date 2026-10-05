@@ -13,5 +13,6 @@ target_link_libraries(sen-bridge-controller
     PUBLIC
         Qt6::Core
         sen::kernel
+        sen::util
         hmi-sen-bridge
 )

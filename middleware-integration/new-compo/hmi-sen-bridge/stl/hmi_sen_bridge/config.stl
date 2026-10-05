@@ -1,0 +1,16 @@
+package hmi_sen_bridge;
+
+// import "stl/sen/kernel/basic_types.stl"
+
+// Overall component configuration
+struct Configuration
+{
+  someParam      : string,
+  someOtherParam : Duration
+}
+
+
+class HmiHandle{
+  fn minimize() -> void;
+  fn fullScreen() -> void;
+}

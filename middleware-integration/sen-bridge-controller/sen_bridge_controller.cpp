@@ -1,11 +1,14 @@
 #include "sen_bridge_controller.h"
 
 #include <memory>
+#include <stl/sen/kernel/basic_types.stl.h>
 #include <thread>
+
+#include <QDebug>
 
 #include <sen/kernel/kernel.h>
 
-#include "hmi_sen_bridge.h"
+#include <hmi-sen-bridge/hmi_sen_bridge.h>
 
 class SenBridgeController::SenBridgeControllerPrivate {
 public:
@@ -39,16 +42,31 @@ bool SenBridgeController::connected() const { return d->connected; }
 
 void SenBridgeController::connectToSen() {
   if (d->connected || d->bridgeThread.joinable()) {
+    qInfo() << "Ignoring duplicate Sen connection request";
     return;
   }
 
+  qInfo() << "Starting Sen kernel";
   d->bridgeThread = std::thread([this]() {
     sen::kernel::KernelConfig config;
     auto *component = new HmiSenBridge();
-    config.addToLoad(sen::kernel::KernelConfig::ComponentToLoad{{component}, {}, {}});
+
+    sen::kernel::KernelParams parameters{};
+    parameters.bus="hmi.hmibus";
+    parameters.appName="HMI-Sen-Bridge";
+
+    config.setParams(parameters);
+    sen::kernel::KernelConfig::ComponentToLoad bridge;
+    bridge.component.instance = component;
+    bridge.component.info.name = "hmi-sen-bridge";
+    bridge.config.group = 2;
+    config.addToLoad(bridge);
     d->kernel = std::make_unique<sen::kernel::Kernel>(config);
     const int runResult = d->kernel->run(sen::kernel::KernelBlockMode::doNotBlock);
+  
+    qInfo() << "Sen kernel startup returned" << runResult;
     if (runResult != 0) {
+      qWarning() << "Sen kernel failed to start";
       d->connected = false;
       emit connectedChanged();
     }

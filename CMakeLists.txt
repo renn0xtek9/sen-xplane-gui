@@ -16,25 +16,9 @@ find_package(Qt6 6.10 REQUIRED COMPONENTS Quick)
 qt_standard_project_setup(REQUIRES 6.10)
 
 add_subdirectory(middleware-integration)
-
-qt_add_executable(sen-xplane-hmi
-    app/main.cpp
-    app/pluginmanager.cpp
-    app/pluginmanager.h
-    app/plugininterface.h
-)
-
-qt_add_qml_module(sen-xplane-hmi
-    URI SenXplaneHmi
-    VERSION 1.0
-    QML_FILES
-        app/Main.qml
-)
-
-target_link_libraries(sen-xplane-hmi PRIVATE Qt6::Quick sen-bridge-controller)
-
 add_subdirectory(plugins/x-plane-aircraft/user-interface)
-add_dependencies(sen-xplane-hmi x-plane-aircraft)
+add_subdirectory(app)
+
 
 if(BUILD_TESTING)
     add_subdirectory(app/test)
