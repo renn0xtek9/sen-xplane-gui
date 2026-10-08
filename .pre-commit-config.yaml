@@ -1,0 +1,38 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-json
+      - id: check-yaml
+
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: e2c2116d86a80e72e7146a06e68b7c228afc6319
+    hooks:
+      - id: cmake-format
+        additional_dependencies: [PyYAML==6.0.2]
+
+  - repo: local
+    hooks:
+      - id: clang-format
+        name: clang-format
+        entry: clang-format -i
+        language: system
+        types_or: [c, c++]
+
+      - id: qmllformat
+        name: qmllformat
+        entry: python3 process-automation/pre-commit-hooks/qmllformat.py
+        language: system
+        files: \.qml$
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        files: \.(json|ya?ml|md)$

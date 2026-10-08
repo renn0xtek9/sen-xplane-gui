@@ -7,22 +7,21 @@
 namespace hmi_handle {
 class SEN_EXPORT HmiHandleImpl : public hmi_sen_bridge::HmiHandleBase {
 
-SEN_NOCOPY_NOMOVE(HmiHandleImpl)
+  SEN_NOCOPY_NOMOVE(HmiHandleImpl)
 
 public:
- HmiHandleImpl(std::string name,const sen::VarMap& args):hmi_sen_bridge::HmiHandleBase(name)
- {
-    std::ignore=args;
-    std::cout <<"Handle created"<<std::endl;
- }
- ~HmiHandleImpl()=default;
- protected:
+  HmiHandleImpl(std::string name, const sen::VarMap& args) : hmi_sen_bridge::HmiHandleBase(name) {
+    std::ignore = args;
+    std::cout << "Handle created" << std::endl;
+  }
+  ~HmiHandleImpl() = default;
 
-void registered(sen::kernel::RegistrationApi& api) override;
-void unregistered(sen::kernel::RegistrationApi& api) override;
+protected:
+  void registered(sen::kernel::RegistrationApi& api) override;
+  void unregistered(sen::kernel::RegistrationApi& api) override;
 
-void minimizeImpl() override;
-void fullScreenImpl() override;
+  void minimizeImpl() override;
+  void fullScreenImpl() override;
 };
 
-}
+} // namespace hmi_handle

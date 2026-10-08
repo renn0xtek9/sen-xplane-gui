@@ -3,16 +3,20 @@
 #include <cmath>
 #include <numbers>
 
-AircraftBackend::AircraftBackend(QObject *parent) : QObject(parent) {
+AircraftBackend::AircraftBackend(QObject* parent) : QObject(parent) {
   elapsed_.start();
   connect(&timer_, &QTimer::timeout, this, &AircraftBackend::updateTelemetry);
   updateTelemetry();
   timer_.start(50);
 }
 
-double AircraftBackend::altitude() const { return altitude_; }
+double AircraftBackend::altitude() const {
+  return altitude_;
+}
 
-double AircraftBackend::speed() const { return speed_; }
+double AircraftBackend::speed() const {
+  return speed_;
+}
 
 void AircraftBackend::updateTelemetry() {
   const double elapsedMilliseconds = static_cast<double>(elapsed_.elapsed());
