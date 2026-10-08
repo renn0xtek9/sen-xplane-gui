@@ -8,7 +8,7 @@ class SenBridgeController final : public QObject {
   Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
 
 public:
-  explicit SenBridgeController(QObject *parent = nullptr);
+  explicit SenBridgeController(QObject* parent = nullptr);
   ~SenBridgeController() override;
 
   [[nodiscard]] bool connected() const;

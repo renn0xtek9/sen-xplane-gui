@@ -1,15 +1,38 @@
 name: Continuous integration
 
 on:
-    pull_request:
-        branches:
-            master
+  pull_request:
+    branches: master
 
 permissions:
-    contents: read
-    pull-requests: read
+  contents: read
+  pull-requests: read
 
 jobs:
-    update-environments:
-        name: "Update environments"
-        uses: ./.github/workflows/devcontainer.yml
+  update-environments:
+    name: "Update environments"
+    uses: ./.github/workflows/devcontainer.yml
+
+  formatting:
+    name: "Formatting"
+    runs-on: self-hosted
+    needs:
+      - update-environments
+    if: ${{ always() && (needs.update-environments.result == 'success' || needs.update-environments.result == 'skipped') }}
+    container:
+      image: 192.168.178.39:5443/sen-xplane-gui:0.0.1
+      options: --user 0:0
+    env:
+      HOME: /tmp
+      PRE_COMMIT_HOME: /tmp/pre-commit
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Run pre-commit
+        run: pre-commit run --all-files
+      - name: Restore runner ownership
+        if: always()
+        run: |
+          runner_owner="$(stat -c '%u:%g' "$RUNNER_TEMP")"
+          chown -R "$runner_owner" "$GITHUB_WORKSPACE"
