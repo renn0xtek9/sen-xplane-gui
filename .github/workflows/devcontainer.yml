@@ -1,0 +1,34 @@
+name: Build development environment
+on:
+  workflow_call:
+  
+jobs:
+    update-environment-changes:
+        name: "Check development environment changes"
+        runs-on: ubuntu-latest
+        outputs:
+            changed: ${{ steps.filter.outputs.changed }}
+        steps:
+            - uses: dorny/paths-filter@v3
+              id: filter
+              with:
+                  filters: |
+                      changed:
+                          - '.devcontainer/**'
+
+    build-devcontainers:
+        name: "Build all development environments"
+        needs: update-environment-changes
+        if: ${{ needs.update-environment-changes.outputs.changed == 'true' }}
+        runs-on: self-hosted
+        steps: 
+            - uses: actions/checkout@v4
+              with:
+                path: _work_host/
+            - name: Build dev containers base image 
+              working-directory: /home/github-runner/sen-xplane-gui/_work_host
+              run:  docker build -t 192.168.178.39:5443/sen-xplane-gui:0.0.1 .devcontainer/
+            - name: Push dev containers base image 
+              working-directory: /home/github-runner/sen-xplane-gui/_work_host
+              run: docker push 192.168.178.39:5443/sen-xplane-gui:0.0.1
+ 
