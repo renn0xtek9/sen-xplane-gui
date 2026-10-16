@@ -26,3 +26,9 @@ add_dependencies(
     sen-xplane-hmi
     x-plane-aircraft
 )
+
+set_target_properties(
+    sen-xplane-hmi
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+               "${PROJECT_BINARY_DIR}"
+)
