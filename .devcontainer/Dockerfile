@@ -95,8 +95,3 @@ RUN ${VENV_PATH}/bin/pip install --upgrade pip
 
 RUN ${VENV_PATH}/bin/pip install --no-cache-dir \
     pre-commit 
-
-WORKDIR /workspaces/sen-xplane-gui
-USER ubuntu
-
-CMD ["bash"]
