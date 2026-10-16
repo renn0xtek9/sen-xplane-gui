@@ -18,6 +18,9 @@
     "QT_QPA_PLATFORM": "xcb",
     "QT_QUICK_BACKEND": "software"
   },
+  "remoteEnv": {
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
+  },
   "remoteUser": "ubuntu",
   "updateRemoteUserUID": true,
   "customizations": {
