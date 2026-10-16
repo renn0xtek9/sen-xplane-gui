@@ -4,7 +4,9 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "runArgs": ["--network=host"],
+  "runArgs": [
+    "--network=host"
+  ],
   "mounts": [
     "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/ubuntu/.ssh,readonly",
     "source=/mnt/wslg,target=/mnt/wslg,type=bind",
@@ -17,6 +19,9 @@
     "PULSE_SERVER": "unix:/mnt/wslg/PulseServer",
     "QT_QPA_PLATFORM": "xcb",
     "QT_QUICK_BACKEND": "software"
+  },
+  "remoteEnv": {
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
   },
   "remoteUser": "ubuntu",
   "updateRemoteUserUID": true,

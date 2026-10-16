@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     clang-tidy \
     clangd \
     curl \
+    wget \
     gdb \
     git \
     libgmock-dev \
@@ -86,6 +87,16 @@ RUN usermod -aG sudo ubuntu \
     && echo "if [ -f /usr/share/bash-completion/bash_completion ]; then . /usr/share/bash-completion/bash_completion; fi" >> /home/ubuntu/.bashrc \
     && echo "source /usr/share/bash-completion/completions/git 2>/dev/null || true" >> /home/ubuntu/.bashrc
 
+# Install gh cli 
+# Install GitHub CLI repository
+RUN mkdir -p -m 755 /etc/apt/keyrings \
+    && wget -nv -O /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    > /etc/apt/sources.list.d/github-cli.list
+
+RUN apt-get update && apt-get install -y gh
 
 # We use python3-pip instead of pipx to enable tools for all users
 # (Remember that user on GitHub CI will be "root")
