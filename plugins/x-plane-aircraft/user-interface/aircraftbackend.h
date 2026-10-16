@@ -10,7 +10,7 @@ class AircraftBackend final : public QObject {
   Q_PROPERTY(double speed READ speed NOTIFY telemetryChanged)
 
 public:
-  explicit AircraftBackend(QObject *parent = nullptr);
+  explicit AircraftBackend(QObject* parent = nullptr);
 
   [[nodiscard]] double altitude() const;
   [[nodiscard]] double speed() const;

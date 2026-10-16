@@ -1,13 +1,15 @@
 FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PATH="/opt/cmake/bin:/home/ubuntu/.local/bin:${PATH}"
+ENV VENV_PATH=/opt/venv
+ENV PATH="${VENV_PATH}/bin:/opt/cmake/bin:/home/ubuntu/.local/bin:${PATH}"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash-completion \
     build-essential \
     ca-certificates \
     clang-format \
+    clang-tidy \
     clangd \
     curl \
     gdb \
@@ -84,11 +86,12 @@ RUN usermod -aG sudo ubuntu \
     && echo "if [ -f /usr/share/bash-completion/bash_completion ]; then . /usr/share/bash-completion/bash_completion; fi" >> /home/ubuntu/.bashrc \
     && echo "source /usr/share/bash-completion/completions/git 2>/dev/null || true" >> /home/ubuntu/.bashrc
 
-WORKDIR /workspaces/sen-xplane-gui
-USER ubuntu
 
-RUN pipx install 'conan>=2,<3' \
-    && pipx install pre-commit \
-    && pipx install cmakelang
+# We use python3-pip instead of pipx to enable tools for all users
+# (Remember that user on GitHub CI will be "root")
+RUN python3 -m venv ${VENV_PATH}
 
-CMD ["bash"]
+RUN ${VENV_PATH}/bin/pip install --upgrade pip
+
+RUN ${VENV_PATH}/bin/pip install --no-cache-dir \
+    pre-commit 

@@ -15,7 +15,9 @@ class HmiState final : public QObject {
 public:
   using QObject::QObject;
 
-  [[nodiscard]] bool connected() const { return connected_; }
+  [[nodiscard]] bool connected() const {
+    return connected_;
+  }
 
   Q_INVOKABLE void notifySenObjectReceived() {
     if (connected_) {
@@ -33,12 +35,11 @@ private:
   bool connected_ = false;
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   QGuiApplication application(argc, argv);
   QGuiApplication::setApplicationName("Sen X-Plane HMI");
 
-  const QString pluginDirectory =
-      QDir(QCoreApplication::applicationDirPath()).filePath("plugins");
+  const QString pluginDirectory = QDir(QCoreApplication::applicationDirPath()).filePath("plugins");
   PluginManager pluginManager(pluginDirectory);
   const bool smokeTest = application.arguments().contains("--smoke-test");
   if (smokeTest && !pluginManager.hasPlugin("x-plane-aircraft")) {
@@ -47,8 +48,8 @@ int main(int argc, char *argv[]) {
 
   HmiState hmiState;
   SenBridgeController senBridgeController;
-  QObject::connect(&senBridgeController, &SenBridgeController::connectionEstablished,
-                   &hmiState, &HmiState::notifySenObjectReceived);
+  QObject::connect(&senBridgeController, &SenBridgeController::connectionEstablished, &hmiState,
+                   &HmiState::notifySenObjectReceived);
 
   QQmlApplicationEngine engine;
   engine.rootContext()->setContextProperty("hmiState", &hmiState);
@@ -56,15 +57,12 @@ int main(int argc, char *argv[]) {
   engine.rootContext()->setContextProperty("senBridge", &senBridgeController);
   engine.loadFromModule("SenXplaneHmi", "Main");
 
-
-
   if (engine.rootObjects().isEmpty()) {
     return EXIT_FAILURE;
   }
 
   if (smokeTest) {
-    QTimer::singleShot(5000, &application,
-                       [&application] { application.quit(); });
+    QTimer::singleShot(5000, &application, [&application] { application.quit(); });
   }
 
   return application.exec();

@@ -13,14 +13,13 @@
 
 class SenBridgeController::SenBridgeControllerPrivate {
 public:
-  explicit SenBridgeControllerPrivate(SenBridgeController *q)
-      : q(q) {}
+  explicit SenBridgeControllerPrivate(SenBridgeController* q) : q(q) {}
 
   bool connected = false;
   std::unique_ptr<sen::kernel::Kernel> kernel;
   std::thread bridgeThread;
 
-  SenBridgeController *q;
+  SenBridgeController* q;
 
   void stop() {
     if (kernel != nullptr) {
@@ -34,12 +33,16 @@ public:
   }
 };
 
-SenBridgeController::SenBridgeController(QObject *parent)
+SenBridgeController::SenBridgeController(QObject* parent)
     : QObject(parent), d(std::make_unique<SenBridgeControllerPrivate>(this)) {}
 
-SenBridgeController::~SenBridgeController() { stop(); }
+SenBridgeController::~SenBridgeController() {
+  stop();
+}
 
-bool SenBridgeController::connected() const { return d->connected; }
+bool SenBridgeController::connected() const {
+  return d->connected;
+}
 
 void SenBridgeController::connectToSen() {
   if (d->connected || d->bridgeThread.joinable()) {
@@ -59,17 +62,17 @@ load:
 )";
     auto bootloader = sen::kernel::Bootloader::fromYamlString(bootConfig, false);
     auto& config = bootloader->getConfig();
-    auto *component = new HmiSenBridge();
+    auto* component = new HmiSenBridge();
 
     sen::kernel::KernelConfig::ComponentToLoad bridge;
-    
+
     bridge.component.instance = component;
     bridge.component.info.name = "hmi_sen_bridge";
     bridge.config.group = 4;
     config.addToLoad(bridge);
     d->kernel = std::make_unique<sen::kernel::Kernel>(config);
     const int runResult = d->kernel->run(sen::kernel::KernelBlockMode::doNotBlock);
-  
+
     qInfo() << "Sen kernel startup returned" << runResult;
     if (runResult != 0) {
       qWarning() << "Sen kernel failed to start";
@@ -83,6 +86,8 @@ load:
   emit connectionEstablished();
 }
 
-void SenBridgeController::stop() { d->stop(); }
+void SenBridgeController::stop() {
+  d->stop();
+}
 
 #include "sen_bridge_controller.moc"

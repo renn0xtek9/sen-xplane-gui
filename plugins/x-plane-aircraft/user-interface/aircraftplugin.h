@@ -15,5 +15,5 @@ public:
   [[nodiscard]] QString panelTitle() const override;
   [[nodiscard]] QString description() const override;
   [[nodiscard]] QUrl panelSource() const override;
-  [[nodiscard]] QObject *createBackend(QObject *parent) override;
+  [[nodiscard]] QObject* createBackend(QObject* parent) override;
 };
