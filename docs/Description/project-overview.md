@@ -58,7 +58,7 @@ The project is structured as a monolitical CMake project with
   - each library as an "include" subfolder wich itself has as sufolder named "hmi" where public headers of the libraries ares stored. This is done so that when including, files are prefixed with hmi. i.e. `#include "hmi/lib_header.h"`
 - a "middleware-integration" subfolder for the libraries related to the integration and connection with the Sen middleware
 - a "plugins" subfolder containting plugins. In our case there will be two plugins:
-  - an "x-plane-aircraft" plugin to connect to X-Plane and receive data from it
+  - an "x_plane_aircraft" plugin to connect to X-Plane and receive data from it
   - an "osm-view" plugin that renders an open streetmap view
   - every plugins folder structure shall consist of a
     - "user-interface" subfolder for the UI (QML and C++ components)

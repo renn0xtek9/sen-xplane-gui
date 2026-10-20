@@ -1,0 +1,7 @@
+package hmi;
+
+struct Configuration
+{
+  someParam      : string,
+  someOtherParam : Duration
+}
