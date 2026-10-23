@@ -29,8 +29,12 @@ jobs:
       - name: Run pre-commit
         working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
         run: pre-commit run --all-files
-      # - name: Restore runner ownership
-      #   if: always()
-      #   run: |
-      #     runner_owner="$(stat -c '%u:%g' "$RUNNER_TEMP")"
-      #     chown -R "$runner_owner" "$GITHUB_WORKSPACE"
+      - name: Build third party
+        working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
+        run: cd third_party/x_plane_node/ && cmake -S . -B build && cmake --build build
+      - name: Build project
+        working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
+        run: |
+          cmake --preset release 
+          cmake --build build/release 
+          cmake --build build/release/ --target test
