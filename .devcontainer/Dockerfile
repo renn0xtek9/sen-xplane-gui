@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     libgmock-dev \
     libgtest-dev \
+    locales \
     libspdlog-dev \
     ninja-build \
     openssh-client \
@@ -41,6 +42,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxext-dev \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
+    && locale-gen
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 RUN set -eux; \
     case "$(dpkg --print-architecture)" in \
