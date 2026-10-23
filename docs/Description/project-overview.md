@@ -53,12 +53,12 @@ The project is structured as a monolitical CMake project with
 
 - a "cmake" subfolder for cmake macros
 - a "conan" subfolder containing conan profiles required for this project
-- an "app" subfolder for the main application itself
-- a "lib" subfolder for the libraries of the main application
+- an "hmi_core" subfolder for the main application itself
+  - a "lib" subfolder for the libraries of the main application
   - each library as an "include" subfolder wich itself has as sufolder named "hmi" where public headers of the libraries ares stored. This is done so that when including, files are prefixed with hmi. i.e. `#include "hmi/lib_header.h"`
-- a "middleware-integration" subfolder for the libraries related to the integration and connection with the Sen middleware
+  - a "middleware_integration" subfolder for the libraries related to the integration and connection with middlewares (e.g. Sen)
 - a "plugins" subfolder containting plugins. In our case there will be two plugins:
-  - an "x_plane_aircraft" plugin to connect to X-Plane and receive data from it
+  - an "x_plane_aircraft" plugin that receive data from an xplane_sen component (started separatly and living in third_party)
   - an "osm-view" plugin that renders an open streetmap view
   - every plugins folder structure shall consist of a
     - "user-interface" subfolder for the UI (QML and C++ components)
@@ -69,9 +69,19 @@ The project is structured as a monolitical CMake project with
   - "fake" subfolder that will implement fake nodes and services sending fake data for testing purposes.
   - "test" subfolder that will contains unit test and integration test of the middelware integration itself.
 
+### Plugins folder structure
+
+Plugins are located under `plugins` folder.
+Each plugins has a
+
+- `hmi_plugin_sen` folder containing the HmiPluginSen implementation
+- `hmi_sen_component` folder containing the SenComponent implementation
+- `frontend` containing the pure Qt/QML frontend implmentation
+  - `evaluation` subfolder containing executable incorporating the frontend with additional element to show its behavior.
+
 ## HMI Software architecture
 
-The HMI consist of a main apllication written in c++ and Qt/QML 6.
+The HMI consist of a main aplication written in c++ and Qt/QML 6.
 The HMI will lookup for available plugin at runtime and load them dynamically.
 Each plugin is expected to provide a user interface (QML) and a sen object (C++).
 The implements a Sen Component that shall be started at runtime in a separate thread.
