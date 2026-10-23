@@ -13,8 +13,8 @@ jobs:
     name: "Update environments"
     uses: ./.github/workflows/devcontainer.yml
 
-  formatting:
-    name: "Formatting"
+  build-pipeline:
+    name: "Build pipeline"
     runs-on: self-hosted
     needs:
       - update-environments
@@ -26,7 +26,7 @@ jobs:
         with:
           path: _work_system/
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Run pre-commit
+      - name: Formatting
         working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
         run: pre-commit run --all-files
       - name: Build third party
