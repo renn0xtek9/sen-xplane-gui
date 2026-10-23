@@ -27,3 +27,5 @@ set_target_properties(
                LIBRARY_OUTPUT_DIRECTORY
                "${PROJECT_BINARY_DIR}/plugins"
 )
+
+add_subdirectory(evaluation)
