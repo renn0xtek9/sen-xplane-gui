@@ -16,7 +16,7 @@ XplaneAircraftHmiSenComponent::~XplaneAircraftHmiSenComponent() {
   qCritical() << "XplaneAircraftHmiSenComponent destroyed !";
 }
 
-void XplaneAircraftHmiSenComponent::setAircraftBackend(AircraftBackend* aircraft_backend) {
+void XplaneAircraftHmiSenComponent::setAircraftFrontend(AircraftFrontend* aircraft_backend) {
   aircraft_backend_ = aircraft_backend;
 }
 
@@ -37,12 +37,11 @@ sen::kernel::FuncResult XplaneAircraftHmiSenComponent::run(sen::kernel::RunApi& 
   const sen::kernel::BusAddress targetBus{"hmi", "mybus"};
   auto source = api.getSource(targetBus);
 
-  return api.execLoop(sen::Duration::fromHertz(1.0),
-                      [&source,this]() { std::cout << "XplaneAircraftHmiSenComponent run iteration\n";
-                        this->updateUIWithNewValues();
-                        this->counter++;
-                        
-                        });
+  return api.execLoop(sen::Duration::fromHertz(1.0), [&source, this]() {
+    std::cout << "XplaneAircraftHmiSenComponent run iteration\n";
+    this->updateUIWithNewValues();
+    this->counter++;
+  });
 }
 
 sen::kernel::FuncResult XplaneAircraftHmiSenComponent::unload(sen::kernel::UnloadApi&& /*api*/) {
@@ -50,9 +49,8 @@ sen::kernel::FuncResult XplaneAircraftHmiSenComponent::unload(sen::kernel::Unloa
   return done();
 }
 
-void XplaneAircraftHmiSenComponent::updateUIWithNewValues()
-{
-  const double elapsedMilliseconds = static_cast<double>(this->counter*1000);
+void XplaneAircraftHmiSenComponent::updateUIWithNewValues() {
+  const double elapsedMilliseconds = static_cast<double>(this->counter * 1000);
   const double phase = 2.0 * std::numbers::pi * elapsedMilliseconds;
   altitude_ = 1000.0 + 10.0 * std::sin(phase / 10000.0);
   speed_ = 200.0 + 10.0 * std::sin(phase / 5000.0);

@@ -2,7 +2,7 @@
 
 #include <hmi/plugin_sen.h>
 
-#include <x_plane_aircraft_hmi/aircraftbackend.h>
+#include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
 
 #include <QObject>
@@ -24,6 +24,6 @@ public:
   [[nodiscard]] std::shared_ptr<sen::kernel::Component> getSenComponent() const override;
 
 private:
-  AircraftBackend* aircraft_backend_{};
+  AircraftFrontend* aircraft_backend_{};
   std::shared_ptr<XplaneAircraftHmiSenComponent> m_sen_component;
 };

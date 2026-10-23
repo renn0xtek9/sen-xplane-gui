@@ -4,13 +4,13 @@
 #include <QObject>
 #include <QTimer>
 
-class AircraftBackend final : public QObject {
+class AircraftFrontend final : public QObject {
   Q_OBJECT
   Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY telemetryChanged)
   Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY telemetryChanged)
 
 public:
-  explicit AircraftBackend(QObject* parent = nullptr);
+  explicit AircraftFrontend(QObject* parent = nullptr);
 
   void setAltitude(const double);
   void setSpeed(const double);

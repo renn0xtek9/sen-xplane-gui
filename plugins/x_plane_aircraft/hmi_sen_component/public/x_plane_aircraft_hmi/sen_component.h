@@ -5,14 +5,14 @@
 
 #include <stl/x_plane_aircraft_hmi/config.stl.h>
 
-#include <x_plane_aircraft_hmi/aircraftbackend.h>
+#include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
 class SEN_EXPORT XplaneAircraftHmiSenComponent : public sen::kernel::Component {
 public:
   XplaneAircraftHmiSenComponent();
   virtual ~XplaneAircraftHmiSenComponent();
 
-  void setAircraftBackend(AircraftBackend* aircraft_backend);
+  void setAircraftFrontend(AircraftFrontend* aircraft_backend);
 
   sen::kernel::FuncResult load(sen::kernel::LoadApi&& api) override;
 
@@ -24,12 +24,11 @@ public:
 
 private:
   x_plane_aircraft_hmi::Configuration config_;
-  AircraftBackend* aircraft_backend_;
+  AircraftFrontend* aircraft_backend_;
 
   void updateUIWithNewValues();
 
   double altitude_{1000.0};
   double speed_{200.0};
   int counter{};
-
 };

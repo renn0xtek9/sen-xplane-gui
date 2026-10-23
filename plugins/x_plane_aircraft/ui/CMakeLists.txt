@@ -1,8 +1,8 @@
 qt_add_library(
     x_plane_plugin_ui
     STATIC
-    aircraftbackend.cpp
-    public/x_plane_aircraft_hmi/aircraftbackend.h
+    aircraft_frontend.cpp
+    public/x_plane_aircraft_hmi/aircraft_frontend.h
 )
 
 target_include_directories(

@@ -35,8 +35,8 @@ QUrl AircraftPlugin::panelSource() const {
 QObject* AircraftPlugin::createBackend(QObject* parent) {
 
   m_sen_component = std::make_shared<XplaneAircraftHmiSenComponent>();
-  aircraft_backend_ = new AircraftBackend(parent);
-  m_sen_component->setAircraftBackend(aircraft_backend_);
+  aircraft_backend_ = new AircraftFrontend(parent);
+  m_sen_component->setAircraftFrontend(aircraft_backend_);
   return aircraft_backend_;
 }
 
