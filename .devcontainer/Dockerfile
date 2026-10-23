@@ -49,16 +49,6 @@ RUN sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
 
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
-# Install Taskfile (https://taskfile.dev/docs/installation#apt)
-RUN set -eux; \
-    curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' \
-        -o /tmp/task-setup.deb.sh; \
-    bash /tmp/task-setup.deb.sh; \
-    rm /tmp/task-setup.deb.sh; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends task; \
-    task --version; \
-    rm -rf /var/lib/apt/lists/*
 
 # Install Taskfile (https://taskfile.dev/docs/installation#apt)
 RUN set -eux; \
