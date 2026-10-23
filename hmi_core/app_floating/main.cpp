@@ -16,6 +16,7 @@
 #include <QQmlError>
 #include <QQuickItem>
 #include <QQuickWidget>
+#include <QSizePolicy>
 #include <QStatusBar>
 #include <QTimer>
 #include <QVariantMap>
@@ -95,15 +96,23 @@ public:
 
     QDockWidget* dock = docksByPlugin_.cbegin().value().first();
     dock->setFloating(true);
+    dock->show();
+    QApplication::processEvents();
+
     const Qt::WindowFlags flags = dock->windowFlags();
-    const bool hasWindowFrame = flags.testFlag(Qt::Window) && flags.testFlag(Qt::WindowTitleHint);
+    const bool hasWindowFrame = dock->isWindow() && !flags.testFlag(Qt::FramelessWindowHint) &&
+                                !flags.testFlag(Qt::MSWindowsFixedSizeDialogHint);
+    const QSize minimumSize = dock->minimumSize();
+    const QSize maximumSize = dock->maximumSize();
 
     const QSize requestedSize(640, 480);
     dock->resize(requestedSize);
+    QApplication::processEvents();
     const bool canResize = dock->size() == requestedSize;
 
     dock->setFloating(false);
-    return hasWindowFrame && canResize;
+    return hasWindowFrame && minimumSize.width() < maximumSize.width() && minimumSize.height() < maximumSize.height() &&
+           canResize;
   }
 
 private:
@@ -119,6 +128,8 @@ private:
 
       auto* quickWidget = new QQuickWidget;
       quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+      quickWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      quickWidget->setMinimumSize(0, 0);
       QObject::connect(
           quickWidget, &QQuickWidget::statusChanged, quickWidget,
           [this, quickWidget, panelTitle,
@@ -139,13 +150,7 @@ private:
       dock->setAllowedAreas(Qt::AllDockWidgetAreas);
       dock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable |
                         QDockWidget::DockWidgetFloatable);
-      dock->setMinimumSize(280, 220);
-      QObject::connect(dock, &QDockWidget::topLevelChanged, dock, [dock](bool floating) {
-        const Qt::WindowFlags floatingFlags = Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint |
-                                              Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint;
-        dock->setWindowFlags(floating ? floatingFlags : Qt::Widget);
-        dock->show();
-      });
+      dock->setMinimumSize(180, 140);
       dock->setWidget(quickWidget);
       addDockWidget(Qt::LeftDockWidgetArea, dock);
       if (firstDock != nullptr) {
