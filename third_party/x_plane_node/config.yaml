@@ -1,0 +1,15 @@
+load:
+  - name: shell
+    group: 2
+    open: [x_plane.aircraft] # to see the created objects
+
+build:
+  - name: XPlaneNodeComponent
+    freqHz: 30
+    imports:
+      - x_plane_node
+    objects:
+      - class: x_plane_node.XPlaneNodeImpl
+        name: xplaneNode
+        bus: x_plane.aircraft
+        aircrarftName: default aricraft name
