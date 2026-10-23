@@ -42,6 +42,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Taskfile (https://taskfile.dev/docs/installation#apt)
+RUN set -eux; \
+    curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' \
+        -o /tmp/task-setup.deb.sh; \
+    bash /tmp/task-setup.deb.sh; \
+    rm /tmp/task-setup.deb.sh; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends task; \
+    task --version; \
+    rm -rf /var/lib/apt/lists/*
+
 RUN set -eux; \
     case "$(dpkg --print-architecture)" in \
     amd64) cmake_arch=x86_64 ;; \
