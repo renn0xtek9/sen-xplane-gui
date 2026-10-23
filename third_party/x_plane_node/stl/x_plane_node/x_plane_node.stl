@@ -1,0 +1,9 @@
+import "stl/x_plane_node/basic_types.stl"
+
+package x_plane_node;
+
+class XPlaneNode
+{
+  var aircaftName : string       [writable,confirmed]; 
+  var pose: AircraftPose [writable];
+}

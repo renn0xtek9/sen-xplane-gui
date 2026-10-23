@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "x_plane_node.json",
+  "title": "x_plane_node.json",
+  "classes": ["x_plane_node.XPlaneNode"],
+  "$defs": {
+    "x_plane_node.XPlaneNode": {
+      "$schema": "https://json-schema.org/draft-07/schema",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "aircaftName": {
+          "description": "",
+          "type": "string"
+        },
+        "pose": {
+          "description": "",
+          "$ref": "#/$defs/x_plane_node.AircraftPose"
+        }
+      },
+      "required": []
+    },
+    "x_plane_node.AircraftPose": {
+      "$schema": "https://json-schema.org/draft-07/schema",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "description": "",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "",
+          "type": "number"
+        },
+        "elevationAboveMsl": {
+          "description": "",
+          "type": "number"
+        },
+        "psi": {
+          "description": "",
+          "type": "number"
+        },
+        "theta": {
+          "description": "",
+          "type": "number"
+        },
+        "phi": {
+          "description": "",
+          "type": "number"
+        },
+        "groundSpeed": {
+          "description": "",
+          "type": "number"
+        },
+        "trueAirspeed": {
+          "description": "",
+          "type": "number"
+        }
+      }
+    }
+  }
+}

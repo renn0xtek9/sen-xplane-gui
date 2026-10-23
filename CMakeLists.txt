@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(
-    sen-xplane-hmi
+    hmi-app
     VERSION 0.1.0
     LANGUAGES CXX
 )
@@ -11,7 +11,7 @@ include(CTest)
 list(
     APPEND
     CMAKE_PREFIX_PATH
-    "/opt/sen/0.6.0"
+    "${SEN_PREFIX}"
 )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -35,10 +35,5 @@ qt_standard_project_setup(
     6.10
 )
 
-add_subdirectory(middleware-integration)
-add_subdirectory(plugins/x-plane-aircraft/user-interface)
-add_subdirectory(app)
-
-if(BUILD_TESTING)
-    add_subdirectory(app/test)
-endif()
+add_subdirectory(hmi_core)
+add_subdirectory(plugins/x_plane_aircraft)

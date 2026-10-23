@@ -1,0 +1,12 @@
+package x_plane_node;
+
+struct AircraftPose{
+    latitude: f32,
+    longitude: f32,
+    elevationAboveMsl: f32,
+    psi: f32,
+    theta: f32,
+    phi: f32,
+    groundSpeed: f32,
+    trueAirspeed: f32,
+}

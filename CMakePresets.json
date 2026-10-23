@@ -13,7 +13,13 @@
       "cacheVariables": {
         "BUILD_TESTING": "ON",
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "SEN_PREFIX": "/opt/sen/0.6.0-debug"
+      },
+      "environment": {
+        "SEN_PREFIX": "/opt/sen/0.6.0-debug",
+        "CMAKE_PREFIX_PATH": "/opt/sen/0.6.0-debug/cmake",
+        "LD_LIBRARY_PATH": "/opt/sen/0.6.0-debug/lib:/opt/sen/0.6.0-debug/bin"
       }
     },
     {
@@ -23,7 +29,8 @@
       "cacheVariables": {
         "BUILD_TESTING": "ON",
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "SEN_PREFIX": "/opt/sen/0.6.0"
       }
     }
   ],

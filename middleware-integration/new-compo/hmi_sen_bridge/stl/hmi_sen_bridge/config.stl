@@ -1,7 +1,0 @@
-package hmi_sen_bridge;
-
-struct Configuration
-{
-  someParam      : string,
-  someOtherParam : Duration
-}

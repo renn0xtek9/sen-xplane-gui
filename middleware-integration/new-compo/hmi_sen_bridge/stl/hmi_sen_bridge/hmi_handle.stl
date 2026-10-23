@@ -1,6 +1,0 @@
-package hmi_sen_bridge;
-
-class HmiHandle{
-  fn minimize() -> void;
-  fn fullScreen() -> void;
-}
