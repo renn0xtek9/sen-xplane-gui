@@ -18,6 +18,7 @@ qt_add_resources(
     "/aircraft"
     FILES
     AircraftPanel.qml
+    AltitudeGraph.qml
 )
 
 set_target_properties(

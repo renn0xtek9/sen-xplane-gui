@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Rectangle {
+    id: aircraftPanel
+
     property var backend
 
     anchors.fill: parent
@@ -35,8 +37,11 @@ Rectangle {
             font.pixelSize: 16
         }
 
-        Item {
+        AltitudeGraph {
+            Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.minimumHeight: 160
+            backend: aircraftPanel.backend
         }
 
         RowLayout {
