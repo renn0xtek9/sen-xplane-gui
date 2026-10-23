@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     libgmock-dev \
     libgtest-dev \
+    locales \
     libspdlog-dev \
     ninja-build \
     openssh-client \
@@ -42,6 +43,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Fix issues with locale
+RUN sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
+    && locale-gen
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
 # Install Taskfile (https://taskfile.dev/docs/installation#apt)
 RUN set -eux; \
     curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' \
@@ -53,6 +61,7 @@ RUN set -eux; \
     task --version; \
     rm -rf /var/lib/apt/lists/*
 
+# CMake 4.4.3    
 RUN set -eux; \
     case "$(dpkg --print-architecture)" in \
     amd64) cmake_arch=x86_64 ;; \
