@@ -70,12 +70,14 @@ The project is structured as a monolitical CMake project with
   - "test" subfolder that will contains unit test and integration test of the middelware integration itself.
 
 ### Plugins folder structure
+
 Plugins are located under `plugins` folder.
-Each plugins has a 
-- `hmi_plugin_sen` folder containing the HmiPluginSen implementation 
+Each plugins has a
+
+- `hmi_plugin_sen` folder containing the HmiPluginSen implementation
 - `hmi_sen_component` folder containing the SenComponent implementation
-- `frontend` containing the pure Qt/QML frontend implmentation 
-  - `evaluation` subfolder containing executable incorporating the frontend with additional element to show its behavior. 
+- `frontend` containing the pure Qt/QML frontend implmentation
+  - `evaluation` subfolder containing executable incorporating the frontend with additional element to show its behavior.
 
 ## HMI Software architecture
 

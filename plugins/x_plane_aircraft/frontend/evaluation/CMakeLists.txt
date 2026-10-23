@@ -20,15 +20,17 @@ target_link_libraries(
 )
 
 if(BUILD_TESTING)
-    add_test(
-        NAME x_plane_plugin_ui_evaluation_smoke_test
-        COMMAND x_plane_plugin_ui_evaluation --smoke-test
+    add_test(NAME x_plane_plugin_ui_evaluation_smoke_test COMMAND x_plane_plugin_ui_evaluation
+                                                                  --smoke-test
     )
 
     set_tests_properties(
         x_plane_plugin_ui_evaluation_smoke_test
-        PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
-                   LABELS "smoke-test"
-                   TIMEOUT 10
+        PROPERTIES ENVIRONMENT
+                   "QT_QPA_PLATFORM=offscreen"
+                   LABELS
+                   "smoke-test"
+                   TIMEOUT
+                   10
     )
 endif()
