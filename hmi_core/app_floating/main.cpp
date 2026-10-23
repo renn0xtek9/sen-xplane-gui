@@ -88,6 +88,24 @@ public:
     return qmlLoadFailed_;
   }
 
+  [[nodiscard]] bool floatingPanelCanMoveAndResize() {
+    if (docksByPlugin_.isEmpty() || docksByPlugin_.cbegin().value().isEmpty()) {
+      return false;
+    }
+
+    QDockWidget* dock = docksByPlugin_.cbegin().value().first();
+    dock->setFloating(true);
+    const Qt::WindowFlags flags = dock->windowFlags();
+    const bool hasWindowFrame = flags.testFlag(Qt::Window) && flags.testFlag(Qt::WindowTitleHint);
+
+    const QSize requestedSize(640, 480);
+    dock->resize(requestedSize);
+    const bool canResize = dock->size() == requestedSize;
+
+    dock->setFloating(false);
+    return hasWindowFrame && canResize;
+  }
+
 private:
   void createPanels() {
     QDockWidget* firstDock = nullptr;
@@ -122,6 +140,12 @@ private:
       dock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable |
                         QDockWidget::DockWidgetFloatable);
       dock->setMinimumSize(280, 220);
+      QObject::connect(dock, &QDockWidget::topLevelChanged, dock, [dock](bool floating) {
+        const Qt::WindowFlags floatingFlags = Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint |
+                                              Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint;
+        dock->setWindowFlags(floating ? floatingFlags : Qt::Widget);
+        dock->show();
+      });
       dock->setWidget(quickWidget);
       addDockWidget(Qt::LeftDockWidgetArea, dock);
       if (firstDock != nullptr) {
@@ -192,6 +216,10 @@ int main(int argc, char* argv[]) {
   mainWindow.show();
 
   if (smokeTest) {
+    if (!mainWindow.floatingPanelCanMoveAndResize()) {
+      qCritical() << "Floating panels must have a movable window frame and support resizing.";
+      return EXIT_FAILURE;
+    }
     QTimer::singleShot(1000, &application, [&application, &mainWindow] {
       application.exit(mainWindow.qmlLoadFailed() ? EXIT_FAILURE : EXIT_SUCCESS);
     });
