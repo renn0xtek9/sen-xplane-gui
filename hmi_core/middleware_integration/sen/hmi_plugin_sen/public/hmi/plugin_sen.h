@@ -12,5 +12,5 @@ public:
   [[nodiscard]] virtual std::shared_ptr<sen::kernel::Component> getSenComponent() const = 0;
 };
 
-#define HMI_PLUGIN_SEN_IID "org.senxplane.hmi.HmiPluginSen/1.0"
+#define HMI_PLUGIN_SEN_IID "org.senxplane.hmi.HmiPluginSen/2.0"
 Q_DECLARE_INTERFACE(HmiPluginSen, HMI_PLUGIN_SEN_IID)

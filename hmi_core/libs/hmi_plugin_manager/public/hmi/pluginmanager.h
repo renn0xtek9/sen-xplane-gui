@@ -9,19 +9,21 @@
 class PluginManager final : public QObject {
   Q_OBJECT
   Q_PROPERTY(QVariantList plugins READ plugins NOTIFY pluginsChanged)
+  Q_PROPERTY(QVariantList panels READ panels NOTIFY pluginsChanged)
 
 public:
   explicit PluginManager(const QString& pluginDirectory, std::vector<std::shared_ptr<HmiPluginFactory>> pluginFactories,
                          QObject* parent = nullptr);
 
   [[nodiscard]] QVariantList plugins() const;
+  [[nodiscard]] QVariantList panels() const;
   [[nodiscard]] bool hasPlugin(const QString& pluginId) const;
   [[nodiscard]] std::vector<std::shared_ptr<HmiPlugin>> getPlugins() const;
 
   void addFactory(std::shared_ptr<HmiPluginFactory> factory);
 
   Q_INVOKABLE void setPluginActive(const QString& pluginId, bool active);
-  Q_INVOKABLE void setPanelVisible(const QString& pluginId, bool visible);
+  Q_INVOKABLE void setPanelVisible(const QString& pluginId, const QString& panelId, bool visible);
 
 signals:
   void pluginsChanged();
@@ -29,6 +31,8 @@ signals:
 private:
   void loadPlugins(const QString& pluginDirectory);
   void updatePluginProperty(const QString& pluginId, const QString& property, const QVariant& value);
+  void updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
+                           const QVariant& value);
 
   QVariantList plugins_;
   QList<QPluginLoader*> loaders_;

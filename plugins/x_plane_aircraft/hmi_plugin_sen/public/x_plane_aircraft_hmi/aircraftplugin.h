@@ -17,9 +17,8 @@ public:
   virtual ~AircraftPlugin();
   [[nodiscard]] QString id() const override;
   [[nodiscard]] QString name() const override;
-  [[nodiscard]] QString panelTitle() const override;
   [[nodiscard]] QString description() const override;
-  [[nodiscard]] QUrl panelSource() const override;
+  [[nodiscard]] QList<HmiPluginPanel> panels() const override;
   [[nodiscard]] QObject* createBackend(QObject* parent) override;
   [[nodiscard]] std::shared_ptr<sen::kernel::Component> getSenComponent() const override;
 

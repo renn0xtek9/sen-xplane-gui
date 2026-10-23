@@ -17,6 +17,22 @@ QVariantList PluginManager::plugins() const {
   return plugins_;
 }
 
+QVariantList PluginManager::panels() const {
+  QVariantList panelEntries;
+  for (const QVariant& pluginEntry : plugins_) {
+    const QVariantMap plugin = pluginEntry.toMap();
+    for (const QVariant& panelEntry : plugin.value("panels").toList()) {
+      QVariantMap panel = panelEntry.toMap();
+      panel.insert("pluginId", plugin.value("pluginId"));
+      panel.insert("pluginName", plugin.value("pluginName"));
+      panel.insert("pluginActive", plugin.value("pluginActive"));
+      panel.insert("backend", plugin.value("backend"));
+      panelEntries.append(panel);
+    }
+  }
+  return panelEntries;
+}
+
 std::vector<std::shared_ptr<HmiPlugin>> PluginManager::getPlugins() const {
   return hmi_plugins_;
 }
@@ -35,8 +51,8 @@ void PluginManager::setPluginActive(const QString& pluginId, bool active) {
   updatePluginProperty(pluginId, "pluginActive", active);
 }
 
-void PluginManager::setPanelVisible(const QString& pluginId, bool visible) {
-  updatePluginProperty(pluginId, "panelVisible", visible);
+void PluginManager::setPanelVisible(const QString& pluginId, const QString& panelId, bool visible) {
+  updatePanelProperty(pluginId, panelId, "panelVisible", visible);
 }
 
 void PluginManager::loadPlugins(const QString& pluginDirectory) {
@@ -69,15 +85,23 @@ void PluginManager::loadPlugins(const QString& pluginDirectory) {
           loader->unload();
           delete loader;
         } else {
+          QVariantList panels;
+          for (const HmiPluginPanel& panel : plugin->panels()) {
+            panels.append(QVariantMap{
+                {"panelId", panel.id},
+                {"panelTitle", panel.title},
+                {"panelSource", panel.source},
+                {"panelVisible", true},
+            });
+          }
+
           plugins_.append(QVariantMap{
               {"pluginId", plugin->id()},
               {"pluginName", plugin->name()},
-              {"panelTitle", plugin->panelTitle()},
               {"description", plugin->description()},
-              {"panelSource", plugin->panelSource()},
+              {"panels", panels},
               {"backend", QVariant::fromValue(backend)},
               {"pluginActive", true},
-              {"panelVisible", true},
           });
         }
         break;
@@ -106,6 +130,31 @@ void PluginManager::updatePluginProperty(const QString& pluginId, const QString&
     plugins_[index] = plugin;
     emit pluginsChanged();
     return;
+  }
+}
+
+void PluginManager::updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
+                                        const QVariant& value) {
+  for (qsizetype pluginIndex = 0; pluginIndex < plugins_.size(); ++pluginIndex) {
+    QVariantMap plugin = plugins_[pluginIndex].toMap();
+    if (plugin.value("pluginId").toString() != pluginId) {
+      continue;
+    }
+
+    QVariantList panels = plugin.value("panels").toList();
+    for (qsizetype panelIndex = 0; panelIndex < panels.size(); ++panelIndex) {
+      QVariantMap panel = panels[panelIndex].toMap();
+      if (panel.value("panelId").toString() != panelId || panel.value(property) == value) {
+        continue;
+      }
+
+      panel.insert(property, value);
+      panels[panelIndex] = panel;
+      plugin.insert("panels", panels);
+      plugins_[pluginIndex] = plugin;
+      emit pluginsChanged();
+      return;
+    }
   }
 }
 
