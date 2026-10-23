@@ -105,3 +105,15 @@ The plugin provide with two views:
 
 - AircraftPanel.qml that shows current aircraft data (atltitude speed etc.)
 - AltitudeGraph.qml that shows a graph of altitude over the last then seconds.
+
+## Deployment
+
+### hmi-app
+
+Located under hmi_core/app.
+It is the application with a single Application Window and fixed layout. Panels cannot leave the main window.
+
+### hmi_app_floating (`hmi-app-floating` target)
+
+Located under hmi_core/app_floating. Every plugin view is loaded into a dockable panel.
+Panels can be dragged out of the main window to float independently, and dragged back to dock again.
