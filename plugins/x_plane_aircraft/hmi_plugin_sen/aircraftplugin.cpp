@@ -20,16 +20,15 @@ QString AircraftPlugin::name() const {
   return "X-Plane aircraft";
 }
 
-QString AircraftPlugin::panelTitle() const {
-  return "Aircraft";
-}
-
 QString AircraftPlugin::description() const {
   return "Simulated aircraft telemetry.";
 }
 
-QUrl AircraftPlugin::panelSource() const {
-  return QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"));
+QList<HmiPluginPanel> AircraftPlugin::panels() const {
+  return {
+      {QStringLiteral("aircraft"), QStringLiteral("Aircraft"), QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"))},
+      {QStringLiteral("aircraftGraph"), QStringLiteral("Altitude Graph"),
+       QUrl(QStringLiteral("qrc:/aircraft/AltitudeGraph.qml"))}};
 }
 
 QObject* AircraftPlugin::createBackend(QObject* parent) {

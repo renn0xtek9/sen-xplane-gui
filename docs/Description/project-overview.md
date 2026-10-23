@@ -96,3 +96,12 @@ Every sen object provided by every plugin shall be added to the main Sen compone
 
 - All C++ libraries must be unit tested (100% line coverage).
   - Use pure virtual interfaces for mocking and dependency injection
+
+## Plugins functionality
+
+### x_plane_aicraft plugin
+
+The plugin provide with two views:
+
+- AircraftPanel.qml that shows current aircraft data (atltitude speed etc.)
+- AltitudeGraph.qml that shows a graph of altitude over the last then seconds.

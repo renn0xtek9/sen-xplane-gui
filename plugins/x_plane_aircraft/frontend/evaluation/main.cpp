@@ -15,7 +15,8 @@ int main(int argc, char* argv[]) {
   AircraftFrontend aircraftFrontend;
   QQmlApplicationEngine engine;
   engine.rootContext()->setContextProperty("aircraftFrontend", &aircraftFrontend);
-  engine.loadFromModule("XPlaneAircraftEvaluation", "Main");
+  engine.loadFromModule("XPlaneAircraftEvaluation", "AircrarftPanelEval");
+  engine.loadFromModule("XPlaneAircraftEvaluation", "AircrarftGraphEval");
 
   if (engine.rootObjects().isEmpty()) {
     return EXIT_FAILURE;

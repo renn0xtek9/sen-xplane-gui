@@ -30,17 +30,19 @@ ApplicationWindow {
         Menu {
             title: "View"
             Repeater {
-                model: pluginManager.plugins
+                model: pluginManager.panels
 
                 delegate: MenuItem {
                     required property string pluginId
+                    required property string panelId
                     required property string panelTitle
                     required property bool panelVisible
+                    required property string pluginName
 
-                    text: panelTitle
+                    text: pluginName + " — " + panelTitle
                     checkable: true
                     checked: panelVisible
-                    onTriggered: pluginManager.setPanelVisible(pluginId, checked)
+                    onTriggered: pluginManager.setPanelVisible(pluginId, panelId, checked)
                 }
             }
         }
@@ -70,21 +72,23 @@ ApplicationWindow {
         spacing: 16
 
         Repeater {
-            model: pluginManager.plugins
+            model: pluginManager.panels
 
             delegate: Loader {
                 required property string pluginId
+                required property string panelId
                 required property bool pluginActive
                 required property bool panelVisible
-                required property url panelSource
                 required property var backend
+                required property url panelSource
 
                 active: pluginActive && panelVisible
                 visible: active
                 source: panelSource
-                Layout.fillWidth: true
+                Layout.fillWidth: active
                 Layout.fillHeight: true
-                Layout.minimumWidth: 300
+                Layout.minimumWidth: active ? 300 : 0
+                Layout.preferredWidth: active ? 1 : 0
                 onLoaded: item.backend = backend
             }
         }
