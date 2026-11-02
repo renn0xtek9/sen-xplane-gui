@@ -2,7 +2,8 @@
   "name": "sen-xplane-gui",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": ".."
+    "context": "..",
+    "options": ["--network=host"]
   },
   "runArgs": ["--network=host"],
   "mounts": [
