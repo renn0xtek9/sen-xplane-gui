@@ -17,10 +17,10 @@ target_link_libraries(
     hmi-app
     PRIVATE Qt6::Quick
             Qt6::Core
-            hmi_sen_bridge_controller
-            hmi_plugin_interface
-            hmi_plugin_sen_factory
-            hmi_plugin_manager
+            hmi::sen_bridge_controller
+            hmi::plugin_interface
+            hmi::plugin_sen_factory
+            hmi::plugin_manager
 )
 
 add_dependencies(

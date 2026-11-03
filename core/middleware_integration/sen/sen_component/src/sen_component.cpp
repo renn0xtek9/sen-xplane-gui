@@ -1,7 +1,7 @@
 #include <QDebug>
 
 #include <hmi/hmi_handle.h>
-#include <hmi/hmi_sen_component.h>
+#include <hmi/sen_component.h>
 
 #include <sen/core/meta/var.h>
 #include <sen/kernel/component.h>

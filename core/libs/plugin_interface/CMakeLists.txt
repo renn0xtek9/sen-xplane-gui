@@ -1,8 +1,14 @@
 add_library(
-    hmi_plugin_interface
+    plugin_interface
     INTERFACE
 )
 target_include_directories(
-    hmi_plugin_interface INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
+    plugin_interface INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
 )
-target_link_libraries(hmi_plugin_interface INTERFACE Qt6::Core)
+target_link_libraries(plugin_interface INTERFACE Qt6::Core)
+
+add_library(
+    hmi::plugin_interface
+    ALIAS
+    plugin_interface
+)

@@ -6,9 +6,9 @@
 
 #include <stl/sen/kernel/basic_types.stl.h>
 
-#include <hmi/hmi_sen_component.h>
 #include <hmi/plugin_sen.h>
 #include <hmi/sen_bridge_controller.h>
+#include <hmi/sen_component.h>
 
 #include <memory>
 #include <thread>

@@ -21,7 +21,7 @@ target_include_directories(hmi_handle_gen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/pub
 
 add_sen_package(
     TARGET
-    hmi_sen_component
+    sen_component
     MAINTAINER
     "Maxime Haselbauer"
     VERSION
@@ -29,8 +29,8 @@ add_sen_package(
     DESCRIPTION
     "HMI Sen component bridge"
     SOURCES
-    public/hmi/hmi_sen_component.h
-    src/hmi_sen_component.cpp
+    public/hmi/sen_component.h
+    src/sen_component.cpp
     STL_FILES
     stl/hmi/config.stl
     PUBLIC_SYMBOLS
@@ -42,4 +42,10 @@ add_sen_package(
     Qt6::Core
 )
 
-target_include_directories(hmi_sen_component_gen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
+target_include_directories(sen_component_gen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
+
+add_library(
+    hmi::sen_component
+    ALIAS
+    sen_component
+)

@@ -12,7 +12,7 @@ target_include_directories(
 target_link_libraries(
     x_plane_aircraft_plugin
     PRIVATE Qt6::Core
-            hmi_plugin_sen
+            hmi::plugin_sen
             x_plane_plugin_sen_component
             x_plane_plugin_ui
 )
