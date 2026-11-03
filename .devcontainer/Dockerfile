@@ -53,7 +53,7 @@ ENV LC_ALL=en_US.UTF-8
 # Install Taskfile (https://taskfile.dev/docs/installation#apt)
 RUN set -eux; \
     curl -1sLf 'https://dl.cloudsmith.io/public/task/task/setup.deb.sh' \
-        -o /tmp/task-setup.deb.sh; \
+    -o /tmp/task-setup.deb.sh; \
     bash /tmp/task-setup.deb.sh; \
     rm /tmp/task-setup.deb.sh; \
     apt-get update; \
@@ -128,3 +128,26 @@ RUN ${VENV_PATH}/bin/pip install --upgrade pip
 
 RUN ${VENV_PATH}/bin/pip install --no-cache-dir \
     pre-commit 
+
+# Debug build of Sen
+RUN mkdir -p /opt/sen-debug
+WORKDIR /opt/sen-debug
+RUN git clone https://github.com/airbus/sen.git
+WORKDIR /opt/sen-debug/sen
+RUN git checkout 0.6.0
+RUN chown -R ubuntu /opt/sen-debug
+USER ubuntu
+RUN pipx install 'conan>=2,<3'
+ENV SEN_GCC_VERSION=15
+RUN mkdir -p ~/.conan2/profiles
+RUN conan config install -tf profiles .conan/profiles/sen_gcc
+RUN cp ~/.conan2/profiles/sen_gcc ~/.conan2/profiles/sen_gcc_debug
+RUN sed -i 's/build_type=Release/build_type=Debug/g' ~/.conan2/profiles/sen_gcc_debug
+RUN sed -i 's/compiler.version=12/compiler.version=15/g' ~/.conan2/profiles/sen_gcc_debug
+RUN conan install . --profile:all=sen_gcc_debug --build=missing
+RUN cmake --preset conan-gcc-debug
+RUN cmake --build build/gcc/Debug/ --parallel 4
+RUN sudo mkdir -p $SEN_PREFIX-debug && sudo chown $(whoami) $SEN_PREFIX-debug
+RUN cmake --install build/gcc/Debug --prefix $SEN_PREFIX-debug
+WORKDIR /
+USER root
