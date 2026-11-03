@@ -14,7 +14,7 @@ class PluginManager final : public QObject {
   Q_PROPERTY(QVariantList panels READ panels NOTIFY pluginsChanged)
 
 public:
-  explicit PluginManager(const QString& pluginDirectory, std::vector<std::shared_ptr<PluginFactory>> pluginFactories,
+  explicit PluginManager(const QString& pluginDirectory, std::vector<std::shared_ptr<PluginFactory>>& pluginFactories,
                          QObject* parent = nullptr);
 
   [[nodiscard]] QVariantList plugins() const;
@@ -22,7 +22,7 @@ public:
   [[nodiscard]] bool hasPlugin(const QString& pluginId) const;
   [[nodiscard]] std::vector<std::shared_ptr<Plugin>> getPlugins() const;
 
-  void addFactory(std::shared_ptr<PluginFactory> factory);
+  void addFactory(const std::shared_ptr<PluginFactory>& factory);
 
   Q_INVOKABLE void setPluginActive(const QString& pluginId, bool active);
   Q_INVOKABLE void setPanelVisible(const QString& pluginId, const QString& panelId, bool visible);

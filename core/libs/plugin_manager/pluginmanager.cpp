@@ -1,15 +1,27 @@
-#include <hmi/plugin_interface.h>
-#include <hmi/pluginmanager.h>
+
+#include <algorithm>
+#include <memory>
+#include <vector>
 
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QLibrary>
+#include <QObject>
+#include <QPluginLoader>
+#include <QVariant>
+#include <QVariantList>
 #include <QVariantMap>
+#include <QtLogging>
+
+#include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_interface.h>
+#include <hmi/pluginmanager.h>
+
 namespace hmi {
 
 PluginManager::PluginManager(const QString& pluginDirectory,
-                             std::vector<std::shared_ptr<PluginFactory>> pluginFactories, QObject* parent)
+                             std::vector<std::shared_ptr<PluginFactory>>& pluginFactories, QObject* parent)
     : hmi_plugin_factories_(pluginFactories), QObject(parent) {
   loadPlugins(pluginDirectory);
 }
@@ -39,13 +51,8 @@ std::vector<std::shared_ptr<Plugin>> PluginManager::getPlugins() const {
 }
 
 bool PluginManager::hasPlugin(const QString& pluginId) const {
-  for (const QVariant& entry : plugins_) {
-    if (entry.toMap().value("pluginId").toString() == pluginId) {
-      return true;
-    }
-  }
-
-  return false;
+  return std::ranges::any_of(
+      plugins_, [&pluginId](const QVariant& entry) { return entry.toMap().value("pluginId").toString() == pluginId; });
 }
 
 void PluginManager::setPluginActive(const QString& pluginId, bool active) {
@@ -121,14 +128,14 @@ void PluginManager::loadPlugins(const QString& pluginDirectory) {
 }
 
 void PluginManager::updatePluginProperty(const QString& pluginId, const QString& property, const QVariant& value) {
-  for (qsizetype index = 0; index < plugins_.size(); ++index) {
-    QVariantMap plugin = plugins_[index].toMap();
+  for (QVariant& pluginValue : plugins_) {
+    QVariantMap plugin = pluginValue.toMap();
     if (plugin.value("pluginId").toString() != pluginId || plugin.value(property) == value) {
       continue;
     }
 
     plugin.insert(property, value);
-    plugins_[index] = plugin;
+    pluginValue = plugin;
     emit pluginsChanged();
     return;
   }
@@ -136,30 +143,30 @@ void PluginManager::updatePluginProperty(const QString& pluginId, const QString&
 
 void PluginManager::updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
                                         const QVariant& value) {
-  for (qsizetype pluginIndex = 0; pluginIndex < plugins_.size(); ++pluginIndex) {
-    QVariantMap plugin = plugins_[pluginIndex].toMap();
+  for (QVariant& pluginValue : plugins_) {
+    QVariantMap plugin = pluginValue.toMap();
     if (plugin.value("pluginId").toString() != pluginId) {
       continue;
     }
 
     QVariantList panels = plugin.value("panels").toList();
-    for (qsizetype panelIndex = 0; panelIndex < panels.size(); ++panelIndex) {
-      QVariantMap panel = panels[panelIndex].toMap();
+    for (QVariant& panelValue : panels) {
+      QVariantMap panel = panelValue.toMap();
       if (panel.value("panelId").toString() != panelId || panel.value(property) == value) {
         continue;
       }
 
       panel.insert(property, value);
-      panels[panelIndex] = panel;
+      panelValue = panel;
       plugin.insert("panels", panels);
-      plugins_[pluginIndex] = plugin;
+      pluginValue = plugin;
       emit pluginsChanged();
       return;
     }
   }
 }
 
-void PluginManager::addFactory(std::shared_ptr<PluginFactory> factory) {
+void PluginManager::addFactory(const std::shared_ptr<PluginFactory>& factory) {
   hmi_plugin_factories_.push_back(factory);
 }
 } // namespace hmi

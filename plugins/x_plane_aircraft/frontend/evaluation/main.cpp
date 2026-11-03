@@ -1,10 +1,13 @@
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
+#include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QResource>
 #include <QTimer>
+#include <QtCore/QtResource>
+#include <cstdlib>
 
 int main(int argc, char* argv[]) {
   QGuiApplication application(argc, argv);
@@ -22,9 +25,9 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  if (application.arguments().contains("--smoke-test")) {
+  if (QGuiApplication::arguments().contains("--smoke-test")) {
     QTimer::singleShot(0, &application, &QCoreApplication::quit);
   }
 
-  return application.exec();
+  return QGuiApplication::exec();
 }

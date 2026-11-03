@@ -14,7 +14,7 @@ double AircraftFrontend::speed() const {
   return speed_;
 }
 
-void AircraftFrontend::setAltitude(const double altitude) {
+void AircraftFrontend::setAltitude(const double& altitude) {
   if (altitude_ == altitude) {
     return;
   }
@@ -48,7 +48,7 @@ QVariantList AircraftFrontend::altitudes() const {
   return samples;
 }
 
-void AircraftFrontend::setSpeed(const double speed) {
+void AircraftFrontend::setSpeed(const double& speed) {
   if (speed_ == speed) {
     return;
   }

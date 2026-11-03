@@ -13,7 +13,7 @@ class AircraftPlugin final : public QObject, public hmi::PluginSen {
   Q_INTERFACES(hmi::PluginSen)
 
 public:
-  AircraftPlugin();
+  AircraftPlugin() = default;
   virtual ~AircraftPlugin();
   [[nodiscard]] QString id() const override;
   [[nodiscard]] QString name() const override;

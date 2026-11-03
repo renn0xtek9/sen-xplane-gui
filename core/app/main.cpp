@@ -1,3 +1,4 @@
+#include <hmi/plugin_factory_interface.h>
 #include <hmi/plugin_sen_factory.h>
 #include <hmi/pluginmanager.h>
 #include <hmi/sen_bridge_controller.h>
@@ -8,6 +9,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QTimer>
+
+#include <cstdlib>
 
 class HmiState final : public QObject {
   Q_OBJECT
@@ -41,13 +44,13 @@ int main(int argc, char* argv[]) {
   QGuiApplication::setApplicationName("Sen X-Plane HMI");
 
   const QString pluginDirectory = QDir(QCoreApplication::applicationDirPath()).filePath("plugins");
-
-  hmi::PluginManager pluginManager(pluginDirectory, {std::make_shared<hmi::PluginSenFactory>()});
-  const bool smokeTest = application.arguments().contains("--smoke-test");
+  auto pluginSenFactory = std::make_shared<hmi::PluginSenFactory>();
+  std::vector<std::shared_ptr<hmi::PluginFactory>> pluginFactories = {pluginSenFactory};
+  hmi::PluginManager pluginManager(pluginDirectory, pluginFactories);
+  const bool smokeTest = QGuiApplication::arguments().contains("--smoke-test");
   if (smokeTest && !pluginManager.hasPlugin("x_plane_aircraft")) {
     return EXIT_FAILURE;
   }
-
   HmiState hmiState;
   hmi::SenBridgeController senBridgeController;
   senBridgeController.addPlugins(pluginManager.getPlugins());
@@ -65,10 +68,10 @@ int main(int argc, char* argv[]) {
   }
 
   if (smokeTest) {
-    QTimer::singleShot(5000, &application, [&application] { application.quit(); });
+    QTimer::singleShot(5000, &application, [&application] { QGuiApplication::quit(); });
   }
 
-  return application.exec();
+  return QGuiApplication::exec();
 }
 
 #include "main.moc"

@@ -20,13 +20,13 @@ public:
   [[nodiscard]] bool connected() const;
 
   Q_INVOKABLE void connectToSen();
-  void addPlugins(std::vector<std::shared_ptr<Plugin>> plugins);
+  void addPlugins(const std::vector<std::shared_ptr<Plugin>>& plugins);
 
   // Implement this to add component to load.
   //  void addComponentToLoad(std::shared_ptr<sen::kernel::Component>, const std::string& name);
 
-public slots:
-  void stop();
+  // Q_SLOTS:
+  Q_SLOT void stop();
 
 signals:
   void connectedChanged();
@@ -35,6 +35,6 @@ signals:
 private:
   class SenBridgeControllerPrivate;
   std::unique_ptr<SenBridgeControllerPrivate> d;
-  std::vector<std::shared_ptr<PluginSen>> m_plugins{};
+  std::vector<std::shared_ptr<PluginSen>> m_plugins;
 };
 } // namespace hmi
