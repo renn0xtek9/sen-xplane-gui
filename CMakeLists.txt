@@ -35,5 +35,5 @@ qt_standard_project_setup(
     6.10
 )
 
-add_subdirectory(hmi_core)
+add_subdirectory(core)
 add_subdirectory(plugins/x_plane_aircraft)
