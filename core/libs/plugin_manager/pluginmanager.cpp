@@ -22,10 +22,10 @@
 
 namespace hmi {
 
-PluginManager::PluginManager(const QString& pluginDirectory,
+PluginManager::PluginManager(std::unique_ptr<PluginInstanceProviderInterface>&& instanceProvider,
                              std::vector<std::shared_ptr<PluginFactory>>& pluginFactories, QObject* parent)
-    : plugin_factories_(pluginFactories), QObject(parent) {
-  loadPlugins(pluginDirectory);
+    : instance_provider_{std::move(instanceProvider)}, plugin_factories_(pluginFactories), QObject(parent) {
+  loadPlugins();
 }
 
 QVariantList PluginManager::plugins() const {
@@ -65,22 +65,15 @@ void PluginManager::setPanelVisible(const QString& pluginId, const QString& pane
   updatePanelProperty(pluginId, panelId, "panelVisible", visible);
 }
 
-void PluginManager::tryLoadingPluginWithAnyFactory(const QFileInfo& fileinfo) {
-  auto* loader = new QPluginLoader(fileinfo.absoluteFilePath(), this);
-  if (loader->instance() == nullptr) {
-    qWarning() << fileinfo.absoluteFilePath() << " cannot be instantiated";
-    loader->unload();
-    delete loader;
-    return;
-  }
+void PluginManager::tryLoadingPluginWithAnyFactory(QObject* instance) {
   for (auto& factory : plugin_factories_) {
-    auto plugin = factory->createPlugin(loader->instance());
+    auto plugin = factory->createPlugin(instance);
     if (!plugin) {
       continue;
     }
-    auto* backend = plugin->createBackend(loader->instance());
+    auto* backend = plugin->createBackend(instance);
     if (backend == nullptr) {
-      qWarning() << fileinfo.absoluteFilePath() << " does not provide a backend";
+      qWarning() << plugin->name() << " does not provide a backend";
       return;
     }
     hmi_plugins_.push_back(plugin);
@@ -106,16 +99,11 @@ void PluginManager::tryLoadingPluginWithAnyFactory(const QFileInfo& fileinfo) {
   }
 }
 
-void PluginManager::loadPlugins(const QString& pluginDirectory) {
-  const QDir directory(pluginDirectory);
-  const QFileInfoList files = directory.entryInfoList(QDir::Files);
+void PluginManager::loadPlugins() {
 
-  for (const QFileInfo& file : files) {
-    if (!QLibrary::isLibrary(file.fileName())) {
-      continue;
-    }
-    qInfo() << " Processing plugin file : " << file.absoluteFilePath();
-    tryLoadingPluginWithAnyFactory(file);
+  auto instances = instance_provider_->getPluginInstances();
+  for (auto* instance : instances) {
+    tryLoadingPluginWithAnyFactory(instance);
   }
   emit pluginsChanged();
 }

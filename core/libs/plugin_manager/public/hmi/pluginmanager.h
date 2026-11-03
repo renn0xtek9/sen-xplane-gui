@@ -1,10 +1,11 @@
 #pragma once
-#include <QFileInfo>
 #include <QObject>
-#include <QPluginLoader>
 #include <QVariantList>
 
+#include <memory>
+
 #include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_instance_provider_interface.h>
 #include <hmi/plugin_interface.h>
 
 namespace hmi {
@@ -15,8 +16,8 @@ class PluginManager final : public QObject {
   Q_PROPERTY(QVariantList panels READ panels NOTIFY pluginsChanged)
 
 public:
-  explicit PluginManager(const QString& pluginDirectory, std::vector<std::shared_ptr<PluginFactory>>& pluginFactories,
-                         QObject* parent = nullptr);
+  explicit PluginManager(std::unique_ptr<PluginInstanceProviderInterface>&& instanceProvider,
+                         std::vector<std::shared_ptr<PluginFactory>>& pluginFactories, QObject* parent = nullptr);
 
   [[nodiscard]] QVariantList plugins() const;
   [[nodiscard]] QVariantList panels() const;
@@ -32,16 +33,17 @@ signals:
   void pluginsChanged();
 
 private:
-  void loadPlugins(const QString& pluginDirectory);
+  void loadPlugins();
   void updatePluginProperty(const QString& pluginId, const QString& property, const QVariant& value);
   void updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
                            const QVariant& value);
 
-  void tryLoadingPluginWithAnyFactory(const QFileInfo& fileinfo);
+  void tryLoadingPluginWithAnyFactory(QObject* instanc);
 
   QVariantList plugins_;
-  QList<QPluginLoader*> loaders_;
   std::vector<std::shared_ptr<Plugin>> hmi_plugins_;
   std::vector<std::shared_ptr<PluginFactory>> plugin_factories_;
+
+  std::unique_ptr<PluginInstanceProviderInterface> instance_provider_;
 };
 } // namespace hmi
