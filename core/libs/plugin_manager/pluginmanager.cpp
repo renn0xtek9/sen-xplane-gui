@@ -22,7 +22,7 @@ namespace hmi {
 
 PluginManager::PluginManager(const QString& pluginDirectory,
                              std::vector<std::shared_ptr<PluginFactory>>& pluginFactories, QObject* parent)
-    : hmi_plugin_factories_(pluginFactories), QObject(parent) {
+    : plugin_factories_(pluginFactories), QObject(parent) {
   loadPlugins(pluginDirectory);
 }
 
@@ -63,6 +63,47 @@ void PluginManager::setPanelVisible(const QString& pluginId, const QString& pane
   updatePanelProperty(pluginId, panelId, "panelVisible", visible);
 }
 
+void PluginManager::tryLoadingPluginWithAnyFactory(const QFileInfo& fileinfo) {
+  auto* loader = new QPluginLoader(fileinfo.absoluteFilePath(), this);
+  if (loader->instance() == nullptr) {
+    qWarning() << fileinfo.absoluteFilePath() << " cannot be instantiated";
+    loader->unload();
+    delete loader;
+    return;
+  }
+  for (auto& factory : plugin_factories_) {
+    auto plugin = factory->createPlugin(loader->instance());
+    if (!plugin) {
+      continue;
+    }
+    auto* backend = plugin->createBackend(loader->instance());
+    if (backend == nullptr) {
+      qWarning() << fileinfo.absoluteFilePath() << " does not provide a backend";
+      return;
+    }
+    hmi_plugins_.push_back(plugin);
+    QVariantList panels;
+    for (const PluginPanel& panel : plugin->panels()) {
+      panels.append(QVariantMap{
+          {"panelId", panel.id},
+          {"panelTitle", panel.title},
+          {"panelSource", panel.source},
+          {"panelVisible", true},
+      });
+    }
+
+    plugins_.append(QVariantMap{
+        {"pluginId", plugin->id()},
+        {"pluginName", plugin->name()},
+        {"description", plugin->description()},
+        {"panels", panels},
+        {"backend", QVariant::fromValue(backend)},
+        {"pluginActive", true},
+    });
+    return;
+  }
+}
+
 void PluginManager::loadPlugins(const QString& pluginDirectory) {
   const QDir directory(pluginDirectory);
   const QFileInfoList files = directory.entryInfoList(QDir::Files);
@@ -71,59 +112,9 @@ void PluginManager::loadPlugins(const QString& pluginDirectory) {
     if (!QLibrary::isLibrary(file.fileName())) {
       continue;
     }
-    qInfo() << " Processing plugin : " << file.absoluteFilePath();
-
-    auto* loader = new QPluginLoader(file.absoluteFilePath(), this);
-    QObject* instance = loader->instance();
-    if (instance == nullptr) {
-      qWarning() << "Could not load plugin" << file.fileName() << loader->errorString();
-      delete loader;
-      continue;
-    }
-
-    for (auto& factory : hmi_plugin_factories_) {
-      qInfo() << "Trying to load plugin";
-      auto plugin = factory->createPlugin(instance);
-      if (plugin) {
-        hmi_plugins_.push_back(plugin);
-        qInfo() << "Created a new plugin instance for" << file.fileName() << "type" << factory->pluginType();
-        QObject* backend = plugin->createBackend(instance);
-        if (backend == nullptr) {
-          qWarning() << "Plugin did not provide a backend:" << plugin->id();
-          loader->unload();
-          delete loader;
-        } else {
-          QVariantList panels;
-          for (const PluginPanel& panel : plugin->panels()) {
-            panels.append(QVariantMap{
-                {"panelId", panel.id},
-                {"panelTitle", panel.title},
-                {"panelSource", panel.source},
-                {"panelVisible", true},
-            });
-          }
-
-          plugins_.append(QVariantMap{
-              {"pluginId", plugin->id()},
-              {"pluginName", plugin->name()},
-              {"description", plugin->description()},
-              {"panels", panels},
-              {"backend", QVariant::fromValue(backend)},
-              {"pluginActive", true},
-          });
-        }
-        break;
-      }
-
-      // TODO if none is found
-      //   qWarning() << "Plugin does not implement Plugin:" << file.fileName();
-      //  loader->unload();
-      //  delete loader;
-      //  continue;
-    }
-    loaders_.append(loader);
+    qInfo() << " Processing plugin file : " << file.absoluteFilePath();
+    tryLoadingPluginWithAnyFactory(file);
   }
-
   emit pluginsChanged();
 }
 
@@ -167,6 +158,6 @@ void PluginManager::updatePanelProperty(const QString& pluginId, const QString& 
 }
 
 void PluginManager::addFactory(const std::shared_ptr<PluginFactory>& factory) {
-  hmi_plugin_factories_.push_back(factory);
+  plugin_factories_.push_back(factory);
 }
 } // namespace hmi

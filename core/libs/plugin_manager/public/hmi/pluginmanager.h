@@ -2,6 +2,7 @@
 #include <hmi/plugin_factory_interface.h>
 #include <hmi/plugin_interface.h>
 
+#include <QFileInfo>
 #include <QObject>
 #include <QPluginLoader>
 #include <QVariantList>
@@ -36,9 +37,11 @@ private:
   void updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
                            const QVariant& value);
 
+  void tryLoadingPluginWithAnyFactory(const QFileInfo& fileinfo);
+
   QVariantList plugins_;
   QList<QPluginLoader*> loaders_;
   std::vector<std::shared_ptr<Plugin>> hmi_plugins_;
-  std::vector<std::shared_ptr<PluginFactory>> hmi_plugin_factories_;
+  std::vector<std::shared_ptr<PluginFactory>> plugin_factories_;
 };
 } // namespace hmi
