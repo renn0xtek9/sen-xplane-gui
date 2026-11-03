@@ -1,5 +1,8 @@
 #include <QDebug>
 
+#include <cmath>
+#include <numbers>
+
 #include <sen/core/base/duration.h>
 #include <sen/core/io/util.h>
 #include <sen/core/meta/var.h>
@@ -11,9 +14,6 @@
 
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
-
-#include <cmath>
-#include <numbers>
 
 void XplaneAircraftHmiSenComponent::setAircraftFrontend(AircraftFrontend* aircraftBackend) {
   aircraft_backend_ = aircraftBackend;

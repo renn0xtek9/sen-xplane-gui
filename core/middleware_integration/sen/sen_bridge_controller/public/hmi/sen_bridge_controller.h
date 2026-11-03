@@ -1,12 +1,12 @@
 #pragma once
 #include <QObject>
 
-#include <hmi/plugin_interface.h>
-#include <hmi/plugin_sen.h>
+#include <memory>
 
 #include <sen/kernel/component.h>
 
-#include <memory>
+#include <hmi/plugin_interface.h>
+#include <hmi/plugin_sen.h>
 namespace hmi {
 
 class SenBridgeController final : public QObject {

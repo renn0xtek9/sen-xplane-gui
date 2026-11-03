@@ -1,11 +1,11 @@
 #pragma once
-#include <hmi/plugin_factory_interface.h>
-#include <hmi/plugin_interface.h>
-
 #include <QFileInfo>
 #include <QObject>
 #include <QPluginLoader>
 #include <QVariantList>
+
+#include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_interface.h>
 
 namespace hmi {
 

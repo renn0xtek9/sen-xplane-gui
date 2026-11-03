@@ -1,8 +1,3 @@
-#include <hmi/plugin_factory_interface.h>
-#include <hmi/plugin_sen_factory.h>
-#include <hmi/pluginmanager.h>
-#include <hmi/sen_bridge_controller.h>
-
 #include <QDir>
 #include <QGuiApplication>
 #include <QObject>
@@ -14,6 +9,11 @@
 #include <cstdlib>
 #include <memory>
 #include <vector>
+
+#include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_sen_factory.h>
+#include <hmi/pluginmanager.h>
+#include <hmi/sen_bridge_controller.h>
 
 class HmiState final : public QObject {
   Q_OBJECT

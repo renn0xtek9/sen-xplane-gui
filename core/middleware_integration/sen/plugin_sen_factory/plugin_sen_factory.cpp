@@ -1,7 +1,7 @@
-#include <memory>
-
 #include <QObject>
 #include <QString>
+
+#include <memory>
 
 #include <hmi/plugin_interface.h>
 #include <hmi/plugin_sen.h>

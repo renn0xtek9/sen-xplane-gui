@@ -3,6 +3,10 @@
 #include <QtCore/qtmetamacros.h>
 #include <QtLogging>
 
+#include <memory>
+#include <thread>
+#include <vector>
+
 #include <sen/kernel/bootloader.h>
 #include <sen/kernel/kernel.h>
 #include <sen/kernel/kernel_config.h>
@@ -13,10 +17,6 @@
 #include <hmi/plugin_sen.h>
 #include <hmi/sen_bridge_controller.h>
 #include <hmi/sen_component.h>
-
-#include <memory>
-#include <thread>
-#include <vector>
 namespace hmi {
 
 class SenBridgeController::SenBridgeControllerPrivate {

@@ -1,9 +1,6 @@
-#include <memory>
-
 #include <QDebug>
 
-#include <hmi/hmi_handle.h>
-#include <hmi/sen_component.h>
+#include <memory>
 
 #include <sen/core/base/duration.h>
 #include <sen/core/io/util.h>
@@ -13,6 +10,9 @@
 
 #include <stl/hmi/config.stl.h>
 #include <stl/sen/kernel/basic_types.stl.h>
+
+#include <hmi/hmi_handle.h>
+#include <hmi/sen_component.h>
 
 // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): Required non-movable Sen lifecycle API.
 sen::kernel::FuncResult HmiSenComponent::load([[maybe_unused]] sen::kernel::LoadApi&& api) {

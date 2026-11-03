@@ -5,15 +5,15 @@
 #include <QUrl>
 #include <QtLogging>
 
+#include <memory>
+
+#include <sen/kernel/component.h>
+
 #include <hmi/plugin_interface.h>
 
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/aircraftplugin.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
-
-#include <memory>
-
-#include <sen/kernel/component.h>
 
 AircraftPlugin::~AircraftPlugin() {
   qCritical() << "Aircraft Plugin destroyed";

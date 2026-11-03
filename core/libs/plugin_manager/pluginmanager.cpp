@@ -1,8 +1,4 @@
 
-#include <algorithm>
-#include <memory>
-#include <vector>
-
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -15,6 +11,10 @@
 #include <QtCore/qcontainerfwd.h>
 #include <QtCore/qtmetamacros.h>
 #include <QtLogging>
+
+#include <algorithm>
+#include <memory>
+#include <vector>
 
 #include <hmi/plugin_factory_interface.h>
 #include <hmi/plugin_interface.h>

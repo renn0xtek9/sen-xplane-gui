@@ -1,5 +1,3 @@
-#include <x_plane_aircraft_hmi/aircraft_frontend.h>
-
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -7,7 +5,10 @@
 #include <QResource>
 #include <QTimer>
 #include <QtCore/QtResource>
+
 #include <cstdlib>
+
+#include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
 int main(int argc, char* argv[]) {
   QGuiApplication application(argc, argv);

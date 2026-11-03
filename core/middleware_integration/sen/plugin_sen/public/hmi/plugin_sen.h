@@ -1,9 +1,9 @@
 #pragma once
-#include <hmi/plugin_interface.h>
+#include <memory>
 
 #include <sen/kernel/component.h>
 
-#include <memory>
+#include <hmi/plugin_interface.h>
 
 namespace hmi {
 

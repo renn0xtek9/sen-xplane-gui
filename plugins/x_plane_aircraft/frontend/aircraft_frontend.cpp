@@ -1,5 +1,3 @@
-#include <x_plane_aircraft_hmi/aircraft_frontend.h>
-
 #include <QObject>
 #include <QPair>
 #include <QString>
@@ -8,6 +6,8 @@
 #include <QVariantMap>
 #include <QtCore/qcontainerfwd.h>
 #include <QtCore/qtmetamacros.h>
+
+#include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
 AircraftFrontend::AircraftFrontend(QObject* parent) : QObject(parent) {
   altitudes_.append(qMakePair(QTime::currentTime(), altitude_));
