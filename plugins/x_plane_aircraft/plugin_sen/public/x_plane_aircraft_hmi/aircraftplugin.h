@@ -1,11 +1,11 @@
 #pragma once
 
+#include <QObject>
+
 #include <hmi/plugin_sen.h>
 
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
-
-#include <QObject>
 
 class AircraftPlugin final : public QObject, public hmi::PluginSen {
   Q_OBJECT
@@ -13,7 +13,7 @@ class AircraftPlugin final : public QObject, public hmi::PluginSen {
   Q_INTERFACES(hmi::PluginSen)
 
 public:
-  AircraftPlugin();
+  AircraftPlugin() = default;
   virtual ~AircraftPlugin();
   [[nodiscard]] QString id() const override;
   [[nodiscard]] QString name() const override;

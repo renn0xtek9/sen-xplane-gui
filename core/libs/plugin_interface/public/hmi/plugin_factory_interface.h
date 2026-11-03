@@ -1,9 +1,10 @@
 #pragma once
-#include <hmi/plugin_interface.h>
-#include <memory>
-
 #include <QObject>
 #include <QString>
+
+#include <memory>
+
+#include <hmi/plugin_interface.h>
 
 namespace hmi {
 

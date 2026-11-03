@@ -1,6 +1,13 @@
-#include <x_plane_aircraft_hmi/aircraft_frontend.h>
-
+#include <QObject>
+#include <QPair>
+#include <QString>
+#include <QTime>
+#include <QVariant>
 #include <QVariantMap>
+#include <QtCore/qcontainerfwd.h>
+#include <QtCore/qtmetamacros.h>
+
+#include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
 AircraftFrontend::AircraftFrontend(QObject* parent) : QObject(parent) {
   altitudes_.append(qMakePair(QTime::currentTime(), altitude_));
@@ -14,7 +21,7 @@ double AircraftFrontend::speed() const {
   return speed_;
 }
 
-void AircraftFrontend::setAltitude(const double altitude) {
+void AircraftFrontend::setAltitude(const double& altitude) {
   if (altitude_ == altitude) {
     return;
   }
@@ -48,7 +55,7 @@ QVariantList AircraftFrontend::altitudes() const {
   return samples;
 }
 
-void AircraftFrontend::setSpeed(const double speed) {
+void AircraftFrontend::setSpeed(const double& speed) {
   if (speed_ == speed) {
     return;
   }

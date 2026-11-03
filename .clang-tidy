@@ -1,5 +1,118 @@
-Checks: '-*,bugprone-*,clang-analyzer-*,performance-*'
-WarningsAsErrors: ''
-HeaderFilterRegex: '^(app|middleware-integration|plugins)/'
+
+---
+# ============================================================
+# Clang-Tidy configuration for strict Qt / QML C++ projects
+# ============================================================
+
+Checks: >
+  -*,
+  clang-analyzer-*,
+  bugprone-*,
+  cert-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+
+  # Disable checks with a high false-positive rate or
+  # which frequently conflict with Qt conventions.
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-special-member-functions,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-reserved-identifier,
+  -misc-non-private-member-variables-in-classes,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-named-parameter,
+
+# Treat every clang-tidy warning as an error.
+WarningsAsErrors: '*'
+
+# Analyze project headers as well.
+HeaderFilterRegex: '(?!/usr/|/opt/).*'
+
+# Ignore generated and third-party headers.
+ExcludeHeaderFilterRegex: >
+  (^|/)(build|_build|third_party|external|vendor|generated|qmlcache)/
+
+# Use the project's .clang-format file.
 FormatStyle: file
-InheritParentConfig: false
+
+# Don't analyze system headers.
+SystemHeaders: false
+
+# ============================================================
+# Check-specific options
+# ============================================================
+
+CheckOptions:
+
+  # Modern C++ practices
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+
+  - key: modernize-use-override.IgnoreDestructors
+    value: 'true'
+
+  # Explicit constructors are preferred.
+  - key: bugprone-exception-escape.IgnoredExceptions
+    value: ''
+
+  # Readability
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '15'
+
+  - key: readability-function-size.LineThreshold
+    value: '80'
+
+  - key: readability-function-size.StatementThreshold
+    value: '40'
+
+  - key: readability-function-size.ParameterThreshold
+    value: '6'
+
+  # Avoid implicit boolean conversions.
+  - key: readability-implicit-bool-conversion.AllowPointerConditions
+    value: 'false'
+
+  # Naming conventions compatible with typical Qt code.
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+
+  - key: readability-identifier-naming.MethodCase
+    value: camelBack
+
+  - key: readability-identifier-naming.VariableCase
+    value: camelBack
+
+  - key: readability-identifier-naming.ParameterCase
+    value: camelBack
+
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  # Explicitly require braces, even for short statements.
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: '0'
+
+...

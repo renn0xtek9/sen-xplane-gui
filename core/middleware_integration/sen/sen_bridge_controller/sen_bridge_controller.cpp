@@ -1,17 +1,22 @@
 #include <QDebug>
-
-#include <sen/kernel/bootloader.h>
-#include <sen/kernel/component_api.h>
-#include <sen/kernel/kernel.h>
-
-#include <stl/sen/kernel/basic_types.stl.h>
-
-#include <hmi/plugin_sen.h>
-#include <hmi/sen_bridge_controller.h>
-#include <hmi/sen_component.h>
+#include <QObject>
+#include <QtCore/qtmetamacros.h>
+#include <QtLogging>
 
 #include <memory>
 #include <thread>
+#include <vector>
+
+#include <sen/kernel/bootloader.h>
+#include <sen/kernel/kernel.h>
+#include <sen/kernel/kernel_config.h>
+
+#include <stl/sen/kernel/basic_types.stl.h>
+
+#include <hmi/plugin_interface.h>
+#include <hmi/plugin_sen.h>
+#include <hmi/sen_bridge_controller.h>
+#include <hmi/sen_component.h>
 namespace hmi {
 
 class SenBridgeController::SenBridgeControllerPrivate {
@@ -104,12 +109,12 @@ void SenBridgeController::stop() {
   d->stop();
 }
 
-void SenBridgeController::addPlugins(std::vector<std::shared_ptr<Plugin>> plugins) {
-  for (auto& plugin : plugins) {
-    std::shared_ptr<PluginSen> hmi_sen_plugin = std::dynamic_pointer_cast<PluginSen>(plugin);
-    if (hmi_sen_plugin) {
-      qInfo() << "Adding plugin: " << hmi_sen_plugin->name();
-      m_plugins.push_back(hmi_sen_plugin);
+void SenBridgeController::addPlugins(const std::vector<std::shared_ptr<Plugin>>& plugins) {
+  for (const auto& plugin : plugins) {
+    const std::shared_ptr<PluginSen> hmiSenPlugin = std::dynamic_pointer_cast<PluginSen>(plugin);
+    if (hmiSenPlugin) {
+      qInfo() << "Adding plugin: " << hmiSenPlugin->name();
+      m_plugins.push_back(hmiSenPlugin);
     }
   }
 }

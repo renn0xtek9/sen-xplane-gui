@@ -1,41 +1,40 @@
 #include <QDebug>
 
-#include <hmi/hmi_handle.h>
-#include <hmi/sen_component.h>
+#include <memory>
 
+#include <sen/core/base/duration.h>
+#include <sen/core/io/util.h>
 #include <sen/core/meta/var.h>
 #include <sen/kernel/component.h>
+#include <sen/kernel/component_api.h>
 
 #include <stl/hmi/config.stl.h>
 #include <stl/sen/kernel/basic_types.stl.h>
 
-sen::kernel::FuncResult HmiSenComponent::load(sen::kernel::LoadApi&& api) {
-  // get our configuration
+#include <hmi/hmi_handle.h>
+#include <hmi/sen_component.h>
+
+// NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): Required non-movable Sen lifecycle API.
+sen::kernel::FuncResult HmiSenComponent::load([[maybe_unused]] sen::kernel::LoadApi&& api) {
   config_ = sen::toValue<hmi::Configuration>(api.getConfig());
-  std::cout << "HmiSenComponent config:\n" << config_ << "\n";
-  // qInfo()<< "HmiSenComponent config:\n" << config_ ;
   return done();
 }
 
-sen::kernel::PassResult HmiSenComponent::init(sen::kernel::InitApi&& /*api*/) {
-  qInfo() << "HmiSenComponent init";
+sen::kernel::PassResult HmiSenComponent::init([[maybe_unused]] sen::kernel::InitApi&& /*api*/) {
   return done();
 }
 
-sen::kernel::FuncResult HmiSenComponent::run(sen::kernel::RunApi& api) {
-  qInfo() << "HmiSenComponent run";
-  const sen::kernel::BusAddress targetBus{"hmi", "mybus"};
+sen::kernel::FuncResult HmiSenComponent::run([[maybe_unused]] sen::kernel::RunApi& api) {
+  const sen::kernel::BusAddress targetBus{.sessionName = "hmi", .busName = "mybus"};
   auto source = api.getSource(targetBus);
 
   auto handle = std::make_shared<hmi_handle::HmiHandleImpl>(std::string{"my-handle"}, sen::VarMap{});
   source->add(handle);
 
-  return api.execLoop(sen::Duration::fromHertz(1.0),
-                      [&source, &handle]() { std::cout << "HmiSenComponent run iteration\n"; });
+  return api.execLoop(sen::Duration::fromHertz(1.0), []() {});
 }
 
-sen::kernel::FuncResult HmiSenComponent::unload(sen::kernel::UnloadApi&& /*api*/) {
-  qInfo() << "HmiSenComponent unload";
+sen::kernel::FuncResult HmiSenComponent::unload([[maybe_unused]] sen::kernel::UnloadApi&& /*api*/) {
   return done();
 }
 

@@ -38,3 +38,7 @@ jobs:
           cmake --preset release 
           cmake --build build/release 
           cmake --build build/release/ --target test
+      - name: Run clang-tidy check
+        working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
+        run: |
+          run-clang-tidy -p build/release '^(?!.*(?:mocs_compilation\.cpp$|_qmltyperegistrations\.cpp$|/\.qt/rcc/|/\.rcc/))' -j 4

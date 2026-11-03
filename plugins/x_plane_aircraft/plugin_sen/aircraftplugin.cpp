@@ -1,15 +1,23 @@
 #include <QDebug>
+#include <QList>
+#include <QObject>
+#include <QString>
+#include <QUrl>
+#include <QtLogging>
 
+#include <memory>
+
+#include <sen/kernel/component.h>
+
+#include <hmi/plugin_interface.h>
+
+#include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/aircraftplugin.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
 
-AircraftPlugin::AircraftPlugin() {}
-
 AircraftPlugin::~AircraftPlugin() {
   qCritical() << "Aircraft Plugin destroyed";
-  if (aircraft_backend_) {
-    delete aircraft_backend_;
-  }
+  delete aircraft_backend_;
 }
 
 QString AircraftPlugin::id() const {
@@ -25,10 +33,12 @@ QString AircraftPlugin::description() const {
 }
 
 QList<hmi::PluginPanel> AircraftPlugin::panels() const {
-  return {
-      {QStringLiteral("aircraft"), QStringLiteral("Aircraft"), QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"))},
-      {QStringLiteral("aircraftGraph"), QStringLiteral("Altitude Graph"),
-       QUrl(QStringLiteral("qrc:/aircraft/AltitudeGraph.qml"))}};
+  return {{.id = QStringLiteral("aircraft"),
+           .title = QStringLiteral("Aircraft"),
+           .source = QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"))},
+          {.id = QStringLiteral("aircraftGraph"),
+           .title = QStringLiteral("Altitude Graph"),
+           .source = QUrl(QStringLiteral("qrc:/aircraft/AltitudeGraph.qml"))}};
 }
 
 QObject* AircraftPlugin::createBackend(QObject* parent) {

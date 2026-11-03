@@ -17,8 +17,8 @@ class AircraftFrontend final : public QObject {
 public:
   explicit AircraftFrontend(QObject* parent = nullptr);
 
-  void setAltitude(const double);
-  void setSpeed(const double);
+  void setAltitude(const double&);
+  void setSpeed(const double&);
 
   [[nodiscard]] double altitude() const;
   [[nodiscard]] double speed() const;
@@ -29,11 +29,9 @@ signals:
   void telemetryChanged();
   void altitudeTableChanged();
 
-private slots:
-
 private:
   QTimer timer_;
   double altitude_ = 1000.0;
   double speed_ = 200.0;
-  QVector<QPair<QTime, double>> altitudes_{};
+  QVector<QPair<QTime, double>> altitudes_;
 };
