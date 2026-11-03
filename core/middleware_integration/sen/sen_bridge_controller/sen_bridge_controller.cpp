@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QObject>
+#include <QtCore/qtmetamacros.h>
 #include <QtLogging>
 
 #include <sen/kernel/bootloader.h>

@@ -9,8 +9,11 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QTimer>
+#include <QtCore/qtmetamacros.h>
 
 #include <cstdlib>
+#include <memory>
+#include <vector>
 
 class HmiState final : public QObject {
   Q_OBJECT

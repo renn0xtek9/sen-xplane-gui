@@ -1,7 +1,8 @@
 #include <QDebug>
 #include <QList>
 #include <QObject>
-#include <QStringLiteral>
+#include <QString>
+#include <QUrl>
 #include <QtLogging>
 
 #include <hmi/plugin_interface.h>

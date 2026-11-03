@@ -12,6 +12,8 @@
 #include <QVariant>
 #include <QVariantList>
 #include <QVariantMap>
+#include <QtCore/qcontainerfwd.h>
+#include <QtCore/qtmetamacros.h>
 #include <QtLogging>
 
 #include <hmi/plugin_factory_interface.h>

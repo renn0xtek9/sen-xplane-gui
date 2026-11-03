@@ -5,6 +5,7 @@
 #include <hmi/hmi_handle.h>
 #include <hmi/sen_component.h>
 
+#include <sen/core/base/duration.h>
 #include <sen/core/io/util.h>
 #include <sen/core/meta/var.h>
 #include <sen/kernel/component.h>

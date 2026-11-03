@@ -1,6 +1,9 @@
 #include <sen/core/meta/class_type.h>
 
+#include <sen/kernel/component_api.h>
+
 #include <hmi/hmi_handle.h>
+#include <utility>
 
 namespace hmi_handle {
 
