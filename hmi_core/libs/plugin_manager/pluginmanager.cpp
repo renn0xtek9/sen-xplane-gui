@@ -6,9 +6,10 @@
 #include <QFileInfo>
 #include <QLibrary>
 #include <QVariantMap>
+namespace hmi {
 
 PluginManager::PluginManager(const QString& pluginDirectory,
-                             std::vector<std::shared_ptr<HmiPluginFactory>> pluginFactories, QObject* parent)
+                             std::vector<std::shared_ptr<PluginFactory>> pluginFactories, QObject* parent)
     : hmi_plugin_factories_(pluginFactories), QObject(parent) {
   loadPlugins(pluginDirectory);
 }
@@ -33,7 +34,7 @@ QVariantList PluginManager::panels() const {
   return panelEntries;
 }
 
-std::vector<std::shared_ptr<HmiPlugin>> PluginManager::getPlugins() const {
+std::vector<std::shared_ptr<Plugin>> PluginManager::getPlugins() const {
   return hmi_plugins_;
 }
 
@@ -86,7 +87,7 @@ void PluginManager::loadPlugins(const QString& pluginDirectory) {
           delete loader;
         } else {
           QVariantList panels;
-          for (const HmiPluginPanel& panel : plugin->panels()) {
+          for (const PluginPanel& panel : plugin->panels()) {
             panels.append(QVariantMap{
                 {"panelId", panel.id},
                 {"panelTitle", panel.title},
@@ -108,7 +109,7 @@ void PluginManager::loadPlugins(const QString& pluginDirectory) {
       }
 
       // TODO if none is found
-      //   qWarning() << "Plugin does not implement HmiPlugin:" << file.fileName();
+      //   qWarning() << "Plugin does not implement Plugin:" << file.fileName();
       //  loader->unload();
       //  delete loader;
       //  continue;
@@ -158,6 +159,7 @@ void PluginManager::updatePanelProperty(const QString& pluginId, const QString& 
   }
 }
 
-void PluginManager::addFactory(std::shared_ptr<HmiPluginFactory> factory) {
+void PluginManager::addFactory(std::shared_ptr<PluginFactory> factory) {
   hmi_plugin_factories_.push_back(factory);
 }
+} // namespace hmi

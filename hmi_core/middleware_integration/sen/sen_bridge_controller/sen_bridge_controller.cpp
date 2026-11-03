@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <thread>
+namespace hmi {
 
 class SenBridgeController::SenBridgeControllerPrivate {
 public:
@@ -103,9 +104,9 @@ void SenBridgeController::stop() {
   d->stop();
 }
 
-void SenBridgeController::addPlugins(std::vector<std::shared_ptr<HmiPlugin>> plugins) {
+void SenBridgeController::addPlugins(std::vector<std::shared_ptr<Plugin>> plugins) {
   for (auto& plugin : plugins) {
-    std::shared_ptr<HmiPluginSen> hmi_sen_plugin = std::dynamic_pointer_cast<HmiPluginSen>(plugin);
+    std::shared_ptr<PluginSen> hmi_sen_plugin = std::dynamic_pointer_cast<PluginSen>(plugin);
     if (hmi_sen_plugin) {
       qInfo() << "Adding plugin: " << hmi_sen_plugin->name();
       m_plugins.push_back(hmi_sen_plugin);
@@ -114,3 +115,4 @@ void SenBridgeController::addPlugins(std::vector<std::shared_ptr<HmiPlugin>> plu
 }
 
 // #include "sen_bridge_controller.moc"
+} // namespace hmi

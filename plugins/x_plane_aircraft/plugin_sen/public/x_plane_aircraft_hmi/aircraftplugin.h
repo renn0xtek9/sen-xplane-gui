@@ -7,10 +7,10 @@
 
 #include <QObject>
 
-class AircraftPlugin final : public QObject, public HmiPluginSen {
+class AircraftPlugin final : public QObject, public hmi::PluginSen {
   Q_OBJECT
-  Q_PLUGIN_METADATA(IID HMI_PLUGIN_SEN_IID)
-  Q_INTERFACES(HmiPluginSen)
+  Q_PLUGIN_METADATA(IID PLUGIN_SEN_IID)
+  Q_INTERFACES(hmi::PluginSen)
 
 public:
   AircraftPlugin();
@@ -18,7 +18,7 @@ public:
   [[nodiscard]] QString id() const override;
   [[nodiscard]] QString name() const override;
   [[nodiscard]] QString description() const override;
-  [[nodiscard]] QList<HmiPluginPanel> panels() const override;
+  [[nodiscard]] QList<hmi::PluginPanel> panels() const override;
   [[nodiscard]] QObject* createBackend(QObject* parent) override;
   [[nodiscard]] std::shared_ptr<sen::kernel::Component> getSenComponent() const override;
 

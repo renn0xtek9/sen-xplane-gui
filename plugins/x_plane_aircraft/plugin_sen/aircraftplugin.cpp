@@ -24,7 +24,7 @@ QString AircraftPlugin::description() const {
   return "Simulated aircraft telemetry.";
 }
 
-QList<HmiPluginPanel> AircraftPlugin::panels() const {
+QList<hmi::PluginPanel> AircraftPlugin::panels() const {
   return {
       {QStringLiteral("aircraft"), QStringLiteral("Aircraft"), QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"))},
       {QStringLiteral("aircraftGraph"), QStringLiteral("Altitude Graph"),

@@ -7,6 +7,7 @@
 #include <sen/kernel/component.h>
 
 #include <memory>
+namespace hmi {
 
 class SenBridgeController final : public QObject {
   Q_OBJECT
@@ -19,7 +20,7 @@ public:
   [[nodiscard]] bool connected() const;
 
   Q_INVOKABLE void connectToSen();
-  void addPlugins(std::vector<std::shared_ptr<HmiPlugin>> plugins);
+  void addPlugins(std::vector<std::shared_ptr<Plugin>> plugins);
 
   // Implement this to add component to load.
   //  void addComponentToLoad(std::shared_ptr<sen::kernel::Component>, const std::string& name);
@@ -34,5 +35,6 @@ signals:
 private:
   class SenBridgeControllerPrivate;
   std::unique_ptr<SenBridgeControllerPrivate> d;
-  std::vector<std::shared_ptr<HmiPluginSen>> m_plugins{};
+  std::vector<std::shared_ptr<PluginSen>> m_plugins{};
 };
+} // namespace hmi

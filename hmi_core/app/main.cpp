@@ -42,16 +42,16 @@ int main(int argc, char* argv[]) {
 
   const QString pluginDirectory = QDir(QCoreApplication::applicationDirPath()).filePath("plugins");
 
-  PluginManager pluginManager(pluginDirectory, {std::make_shared<HmiPluginSenFactory>()});
+  hmi::PluginManager pluginManager(pluginDirectory, {std::make_shared<hmi::PluginSenFactory>()});
   const bool smokeTest = application.arguments().contains("--smoke-test");
   if (smokeTest && !pluginManager.hasPlugin("x_plane_aircraft")) {
     return EXIT_FAILURE;
   }
 
   HmiState hmiState;
-  SenBridgeController senBridgeController;
+  hmi::SenBridgeController senBridgeController;
   senBridgeController.addPlugins(pluginManager.getPlugins());
-  QObject::connect(&senBridgeController, &SenBridgeController::connectionEstablished, &hmiState,
+  QObject::connect(&senBridgeController, &hmi::SenBridgeController::connectionEstablished, &hmiState,
                    &HmiState::notifySenObjectReceived);
 
   QQmlApplicationEngine engine;
