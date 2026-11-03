@@ -85,7 +85,7 @@ void PluginManager::tryLoadingPluginWithAnyFactory(const QFileInfo& fileinfo) {
     }
     hmi_plugins_.push_back(plugin);
     QVariantList panels;
-    for (const PluginPanel& panel : plugin->panels()) {
+    for (const PluginView& panel : plugin->views()) {
       panels.append(QVariantMap{
           {"panelId", panel.id},
           {"panelTitle", panel.title},

@@ -32,7 +32,7 @@ QString AircraftPlugin::description() const {
   return "Simulated aircraft telemetry.";
 }
 
-QList<hmi::PluginPanel> AircraftPlugin::panels() const {
+QList<hmi::PluginView> AircraftPlugin::views() const {
   return {{.id = QStringLiteral("aircraft"),
            .title = QStringLiteral("Aircraft"),
            .source = QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"))},
