@@ -1,4 +1,4 @@
 add_subdirectory(frontend)
-add_subdirectory(hmi_sen_component)
-add_subdirectory(hmi_plugin_sen)
+add_subdirectory(sen_component)
+add_subdirectory(plugin_sen)
 add_subdirectory(tests)

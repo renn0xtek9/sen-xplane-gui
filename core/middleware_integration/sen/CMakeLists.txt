@@ -1,0 +1,4 @@
+add_subdirectory(plugin_sen)
+add_subdirectory(plugin_sen_factory)
+add_subdirectory(sen_component)
+add_subdirectory(sen_bridge_controller)

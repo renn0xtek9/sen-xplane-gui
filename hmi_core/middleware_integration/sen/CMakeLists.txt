@@ -1,4 +1,0 @@
-add_subdirectory(hmi_plugin_sen)
-add_subdirectory(hmi_plugin_sen_factory)
-add_subdirectory(hmi_sen_component)
-add_subdirectory(sen_bridge_controller)

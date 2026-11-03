@@ -1,2 +1,0 @@
-add_subdirectory(hmi_plugin_interface)
-add_subdirectory(hmi_plugin_manager)

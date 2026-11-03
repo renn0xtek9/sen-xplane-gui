@@ -1,0 +1,44 @@
+#pragma once
+#include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_interface.h>
+
+#include <QObject>
+#include <QPluginLoader>
+#include <QVariantList>
+
+namespace hmi {
+
+class PluginManager final : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(QVariantList plugins READ plugins NOTIFY pluginsChanged)
+  Q_PROPERTY(QVariantList panels READ panels NOTIFY pluginsChanged)
+
+public:
+  explicit PluginManager(const QString& pluginDirectory, std::vector<std::shared_ptr<PluginFactory>> pluginFactories,
+                         QObject* parent = nullptr);
+
+  [[nodiscard]] QVariantList plugins() const;
+  [[nodiscard]] QVariantList panels() const;
+  [[nodiscard]] bool hasPlugin(const QString& pluginId) const;
+  [[nodiscard]] std::vector<std::shared_ptr<Plugin>> getPlugins() const;
+
+  void addFactory(std::shared_ptr<PluginFactory> factory);
+
+  Q_INVOKABLE void setPluginActive(const QString& pluginId, bool active);
+  Q_INVOKABLE void setPanelVisible(const QString& pluginId, const QString& panelId, bool visible);
+
+signals:
+  void pluginsChanged();
+
+private:
+  void loadPlugins(const QString& pluginDirectory);
+  void updatePluginProperty(const QString& pluginId, const QString& property, const QVariant& value);
+  void updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
+                           const QVariant& value);
+
+  QVariantList plugins_;
+  QList<QPluginLoader*> loaders_;
+  std::vector<std::shared_ptr<Plugin>> hmi_plugins_;
+  std::vector<std::shared_ptr<PluginFactory>> hmi_plugin_factories_;
+};
+} // namespace hmi

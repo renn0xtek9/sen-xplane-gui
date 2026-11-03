@@ -1,0 +1,2 @@
+add_subdirectory(plugin_interface)
+add_subdirectory(plugin_manager)
