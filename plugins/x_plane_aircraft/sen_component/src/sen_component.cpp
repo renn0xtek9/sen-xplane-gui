@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QMetaObject>
 
 #include <cmath>
 #include <numbers>
@@ -15,8 +16,8 @@
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
 
-void XplaneAircraftHmiSenComponent::setAircraftFrontend(AircraftFrontend* aircraftBackend) {
-  aircraft_backend_ = aircraftBackend;
+void XplaneAircraftHmiSenComponent::addAircraftFrontend(AircraftFrontend* aircraftBackend) {
+  aircraft_backends_.push_back(aircraftBackend);
 }
 
 // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): Required non-movable Sen lifecycle API.
@@ -44,13 +45,21 @@ sen::kernel::FuncResult XplaneAircraftHmiSenComponent::unload([[maybe_unused]] s
 }
 
 void XplaneAircraftHmiSenComponent::updateUIWithNewValues() {
+  // TODO this calculation belong to the aircraft_backend
   const auto elapsedMilliseconds = static_cast<double>(this->counter * 1000);
   const double phase = 2.0 * std::numbers::pi * elapsedMilliseconds;
   altitude_ = 1000.0 + (10.0 * std::sin(phase / 10000.0));
   speed_ = 200.0 + (10.0 * std::sin(phase / 5000.0));
-  this->aircraft_backend_->setAltitude(altitude_);
-  this->aircraft_backend_->setSpeed(speed_);
-  this->aircraft_backend_->telemetryChanged();
+
+  for (auto* backend : aircraft_backends_) {
+    QMetaObject::invokeMethod(
+        backend,
+        [frontend = backend, this]() {
+          frontend->setAltitude(altitude_);
+          frontend->setSpeed(speed_);
+        },
+        Qt::QueuedConnection);
+  }
 }
 
 SEN_COMPONENT(XplaneAircraftHmiSenComponent)

@@ -17,7 +17,7 @@
 
 AircraftPlugin::~AircraftPlugin() {
   qCritical() << "Aircraft Plugin destroyed";
-  delete aircraft_backend_;
+  delete aircraft_frontend_;
 }
 
 QString AircraftPlugin::id() const {
@@ -41,18 +41,22 @@ QList<hmi::PluginView> AircraftPlugin::views() const {
            .source = QUrl(QStringLiteral("qrc:/aircraft/AltitudeGraph.qml"))}};
 }
 
-QObject* AircraftPlugin::createBackend(QObject* parent) {
-
-  m_sen_component = std::make_shared<XplaneAircraftHmiSenComponent>();
-  aircraft_backend_ = new AircraftFrontend(parent);
-  m_sen_component->setAircraftFrontend(aircraft_backend_);
-  return aircraft_backend_;
+QObject* AircraftPlugin::instantiateView(const QString viewId, QObject* parent) {
+  createSenComponentIfUnitialized();
+  aircraft_frontend_ = new AircraftFrontend(parent);
+  m_sen_component->addAircraftFrontend(aircraft_frontend_);
+  return aircraft_frontend_;
 }
 
-std::shared_ptr<sen::kernel::Component> AircraftPlugin::getSenComponent() const {
-  if (m_sen_component == nullptr) {
-    qCritical() << "Sen Component not yet initialized!";
-  }
-  qInfo() << "Returning Sen component: " << m_sen_component.get();
+std::shared_ptr<sen::kernel::Component> AircraftPlugin::getSenComponent() {
+  createSenComponentIfUnitialized();
   return m_sen_component;
+}
+
+void AircraftPlugin::createSenComponentIfUnitialized() {
+  if (m_sen_component == nullptr) {
+    m_sen_component = std::make_shared<XplaneAircraftHmiSenComponent>();
+  } else {
+    qInfo() << "Sen component already initialized for plugin: " << name();
+  }
 }

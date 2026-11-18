@@ -22,7 +22,7 @@ public:
   [[nodiscard]] QList<hmi::PluginView> views() const final {
     return {};
   }
-  [[nodiscard]] QObject* createBackend(QObject* parent) final {
+  [[nodiscard]] QObject* instantiateView(const QString viewId, QObject* parent) final {
     return nullptr;
   }
 };
@@ -68,7 +68,7 @@ public:
     myview.source = QUrl("/some/source");
     return {myview};
   }
-  [[nodiscard]] QObject* createBackend(QObject* parent) final {
+  QObject* instantiateView(const QString viewId, QObject* parent) final {
     return new DummyFrontend(parent);
   }
 };

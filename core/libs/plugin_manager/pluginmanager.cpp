@@ -28,24 +28,24 @@ PluginManager::PluginManager(std::unique_ptr<PluginInstanceProviderInterface>&& 
   loadPlugins();
 }
 
-QVariantList PluginManager::plugins() const {
-  return plugins_;
+QVariantList PluginManager::instantiatedViews() const {
+  return instantiatedViews_;
 }
 
-QVariantList PluginManager::panels() const {
-  QVariantList panelEntries;
-  for (const QVariant& pluginEntry : plugins_) {
-    const QVariantMap plugin = pluginEntry.toMap();
-    for (const QVariant& panelEntry : plugin.value("panels").toList()) {
-      QVariantMap panel = panelEntry.toMap();
-      panel.insert("pluginId", plugin.value("pluginId"));
-      panel.insert("pluginName", plugin.value("pluginName"));
-      panel.insert("pluginActive", plugin.value("pluginActive"));
-      panel.insert("backend", plugin.value("backend"));
-      panelEntries.append(panel);
+QVariantList PluginManager::availableViews() const {
+  QVariantList availableViewsList;
+  for (const auto& plugin : hmi_plugins_) {
+
+    for (const auto& pluginView : plugin->views()) {
+      QVariantMap availableView{};
+      availableView.insert("pluginId", plugin->id());
+      availableView.insert("pluginName", plugin->name());
+      availableView.insert("viewId", pluginView.id);
+      availableView.insert("viewTitle", pluginView.title);
+      availableViewsList.append(availableView);
     }
   }
-  return panelEntries;
+  return availableViewsList;
 }
 
 std::vector<std::shared_ptr<Plugin>> PluginManager::getPlugins() const {
@@ -53,16 +53,8 @@ std::vector<std::shared_ptr<Plugin>> PluginManager::getPlugins() const {
 }
 
 bool PluginManager::hasPlugin(const QString& pluginId) const {
-  return std::ranges::any_of(
-      plugins_, [&pluginId](const QVariant& entry) { return entry.toMap().value("pluginId").toString() == pluginId; });
-}
-
-void PluginManager::setPluginActive(const QString& pluginId, bool active) {
-  updatePluginProperty(pluginId, "pluginActive", active);
-}
-
-void PluginManager::setPanelVisible(const QString& pluginId, const QString& panelId, bool visible) {
-  updatePanelProperty(pluginId, panelId, "panelVisible", visible);
+  return std::ranges::any_of(hmi_plugins_,
+                             [&pluginId](const auto& hmi_plugin) { return hmi_plugin->id() == pluginId; });
 }
 
 void PluginManager::tryLoadingPluginWithAnyFactory(QObject* instance) {
@@ -71,30 +63,7 @@ void PluginManager::tryLoadingPluginWithAnyFactory(QObject* instance) {
     if (!plugin) {
       continue;
     }
-    auto* backend = plugin->createBackend(instance);
-    if (backend == nullptr) {
-      qWarning() << plugin->name() << " does not provide a backend";
-      return;
-    }
     hmi_plugins_.push_back(plugin);
-    QVariantList panels;
-    for (const PluginView& panel : plugin->views()) {
-      panels.append(QVariantMap{
-          {"panelId", panel.id},
-          {"panelTitle", panel.title},
-          {"panelSource", panel.source},
-          {"panelVisible", true},
-      });
-    }
-
-    plugins_.append(QVariantMap{
-        {"pluginId", plugin->id()},
-        {"pluginName", plugin->name()},
-        {"description", plugin->description()},
-        {"panels", panels},
-        {"backend", QVariant::fromValue(backend)},
-        {"pluginActive", true},
-    });
     return;
   }
 }
@@ -105,46 +74,33 @@ void PluginManager::loadPlugins() {
   for (auto* instance : instances) {
     tryLoadingPluginWithAnyFactory(instance);
   }
-  emit pluginsChanged();
+  emit availableViewsChanged();
 }
 
-void PluginManager::updatePluginProperty(const QString& pluginId, const QString& property, const QVariant& value) {
-  for (QVariant& pluginValue : plugins_) {
-    QVariantMap plugin = pluginValue.toMap();
-    if (plugin.value("pluginId").toString() != pluginId || plugin.value(property) == value) {
-      continue;
-    }
-
-    plugin.insert(property, value);
-    pluginValue = plugin;
-    emit pluginsChanged();
+void PluginManager::instantiateView(const QString& pluginId, const QString& viewId) {
+  auto pluginIt =
+      std::ranges::find_if(hmi_plugins_, [&pluginId](const auto& plugin) { return pluginId == plugin->id(); });
+  if (pluginIt == hmi_plugins_.end()) {
     return;
   }
-}
 
-void PluginManager::updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
-                                        const QVariant& value) {
-  for (QVariant& pluginValue : plugins_) {
-    QVariantMap plugin = pluginValue.toMap();
-    if (plugin.value("pluginId").toString() != pluginId) {
-      continue;
-    }
-
-    QVariantList panels = plugin.value("panels").toList();
-    for (QVariant& panelValue : panels) {
-      QVariantMap panel = panelValue.toMap();
-      if (panel.value("panelId").toString() != panelId || panel.value(property) == value) {
-        continue;
-      }
-
-      panel.insert(property, value);
-      panelValue = panel;
-      plugin.insert("panels", panels);
-      pluginValue = plugin;
-      emit pluginsChanged();
-      return;
-    }
+  const auto pluginViews = (*pluginIt)->views();
+  const auto pluginViewIt =
+      std::ranges::find_if(pluginViews, [&viewId](const PluginView& pluginView) { return pluginView.id == viewId; });
+  if (pluginViewIt == pluginViews.end()) {
+    return;
   }
+
+  auto* object = (*pluginIt)->instantiateView(viewId, this);
+  if (object == nullptr) {
+    return;
+  }
+
+  QVariantMap instantiatedViewMap{};
+  instantiatedViewMap.insert("viewControl", QVariant::fromValue(object));
+  instantiatedViewMap.insert("viewSource", pluginViewIt->source);
+  instantiatedViews_.append(instantiatedViewMap);
+  emit instantiatedViewsChanged();
 }
 
 void PluginManager::addFactory(const std::shared_ptr<PluginFactory>& factory) {

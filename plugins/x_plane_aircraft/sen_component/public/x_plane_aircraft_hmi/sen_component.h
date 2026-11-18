@@ -12,7 +12,7 @@ public:
   XplaneAircraftHmiSenComponent() = default;
   ~XplaneAircraftHmiSenComponent() override = default;
 
-  void setAircraftFrontend(AircraftFrontend* aircraftBackend);
+  void addAircraftFrontend(AircraftFrontend* aircraftBackend);
 
   sen::kernel::FuncResult load([[maybe_unused]] sen::kernel::LoadApi&& api) override;
 
@@ -24,7 +24,7 @@ public:
 
 private:
   x_plane_aircraft_hmi::Configuration config_;
-  AircraftFrontend* aircraft_backend_{nullptr};
+  std::vector<AircraftFrontend*> aircraft_backends_{nullptr};
 
   void updateUIWithNewValues();
 

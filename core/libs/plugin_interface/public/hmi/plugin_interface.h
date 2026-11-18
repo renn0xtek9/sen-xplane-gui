@@ -21,7 +21,7 @@ public:
   [[nodiscard]] virtual QString name() const = 0;
   [[nodiscard]] virtual QString description() const = 0;
   [[nodiscard]] virtual QList<PluginView> views() const = 0;
-  [[nodiscard]] virtual QObject* createBackend(QObject* parent) = 0;
+  [[nodiscard]] virtual QObject* instantiateView(const QString viewId, QObject* parent) = 0;
 };
 
 } // namespace hmi

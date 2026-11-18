@@ -30,37 +30,20 @@ ApplicationWindow {
         Menu {
             title: "View"
             Repeater {
-                model: pluginManager.panels
+                model: pluginManager.availableViews
 
                 delegate: MenuItem {
                     required property string pluginId
-                    required property string panelId
-                    required property string panelTitle
-                    required property bool panelVisible
+                    required property string viewId
+                    required property string viewTitle
                     required property string pluginName
 
-                    text: pluginName + " — " + panelTitle
-                    checkable: true
-                    checked: panelVisible
-                    onTriggered: pluginManager.setPanelVisible(pluginId, panelId, checked)
-                }
-            }
-        }
-
-        Menu {
-            title: "Plugin"
-            Repeater {
-                model: pluginManager.plugins
-
-                delegate: MenuItem {
-                    required property string pluginId
-                    required property string pluginName
-                    required property bool pluginActive
-
-                    text: pluginName
-                    checkable: true
-                    checked: pluginActive
-                    onTriggered: pluginManager.setPluginActive(pluginId, checked)
+                    text: pluginName + " — " + viewTitle
+                    checkable: false
+                    onTriggered: {
+                        console.log("Instantiate view:" + pluginId + " " + viewId);
+                        pluginManager.instantiateView(pluginId, viewId);
+                    }
                 }
             }
         }
@@ -72,24 +55,20 @@ ApplicationWindow {
         spacing: 16
 
         Repeater {
-            model: pluginManager.panels
+            model: pluginManager.instantiatedViews
 
             delegate: Loader {
-                required property string pluginId
-                required property string panelId
-                required property bool pluginActive
-                required property bool panelVisible
-                required property var backend
-                required property url panelSource
+                required property var viewControl
+                required property url viewSource
 
-                active: pluginActive && panelVisible
-                visible: active
-                source: panelSource
+                active: true
+                visible: true
+                source: viewSource
                 Layout.fillWidth: active
                 Layout.fillHeight: true
                 Layout.minimumWidth: active ? 300 : 0
                 Layout.preferredWidth: active ? 1 : 0
-                onLoaded: item.backend = backend
+                onLoaded: item.control = viewControl
             }
         }
     }

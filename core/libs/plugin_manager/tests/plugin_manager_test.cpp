@@ -25,8 +25,8 @@ TEST(PluginManager, PluginNoViewNoBackend) {
 
   hmi::PluginManager unit(std::move(dummyProvider), factories, nullptr);
   EXPECT_EQ(unit.getPlugins().size(), 0U);
-  EXPECT_EQ(unit.plugins().size(), 0U);
-  EXPECT_EQ(unit.panels().size(), 0U);
+  EXPECT_EQ(unit.availableViews().size(), 0U);
+  EXPECT_EQ(unit.instantiatedViews().size(), 0U);
   EXPECT_FALSE(unit.hasPlugin("PluginNoViewNoBackend"));
 }
 
@@ -35,15 +35,27 @@ TEST(PluginManager, PluginWithSingleView) {
 
   std::vector<std::shared_ptr<hmi::PluginFactory>> factories{factory};
 
-  std::unique_ptr<hmi::PluginInstanceProviderInterface> dummyProvider =
+  std::unique_ptr<hmi::PluginInstanceProviderInterface> instanceProvider =
       std::make_unique<PluginSingleViewInstanceProvider>();
 
-  hmi::PluginManager unit(std::move(dummyProvider), factories, nullptr);
+  hmi::PluginManager unit(std::move(instanceProvider), factories, nullptr);
   EXPECT_EQ(unit.getPlugins().size(), 1U);
-  EXPECT_EQ(unit.plugins().size(), 1U);
-  EXPECT_EQ(unit.panels().size(), 1U);
   EXPECT_TRUE(unit.hasPlugin("PluginWithSingleView"));
+  EXPECT_EQ(unit.availableViews().size(), 1U);
+  EXPECT_EQ(unit.instantiatedViews().size(), 0U) << "Plugin manager shall not instantiate views by default";
+
+  unit.instantiateView("PluginWithSingleView", "Some view");
+  ASSERT_EQ(unit.instantiatedViews().size(), 1U);
+  const auto instantiatedView = unit.instantiatedViews().first().toMap();
+  EXPECT_EQ(instantiatedView.value("viewSource").toUrl(), QUrl("/some/source"));
+  EXPECT_NE(instantiatedView.value("viewControl").value<QObject*>(), nullptr);
+
+  unit.instantiateView("PluginWithSingleView", "Unknown view");
+  unit.instantiateView("Unknown plugin", "Some view");
+  EXPECT_EQ(unit.instantiatedViews().size(), 1);
 }
+
+// Add instantiate view to pluginmanager and write a test case for it.
 
 // Test a plugin that returns a single view
 //  - the instantiate view can be called

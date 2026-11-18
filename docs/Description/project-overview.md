@@ -87,6 +87,13 @@ Each plugin is expected to provide a user interface (QML) and a sen object (C++)
 The implements a Sen Component that shall be started at runtime in a separate thread.
 Every sen object provided by every plugin shall be added to the main Sen component of the HMI via the `componentToLoad` method.
 
+### Panel container
+
+The `PanelContainer` QML element is provided by the library `panel_container` under core/libs/
+a Panel container consist of a QML component that can host one or more view of one provided by one or more Plugin.
+It consist of a top bar that has a title and a maximize and minimize icon.
+When the cursor approaches its edges, the cursor shape changes to the resize shape and by clicking and dragging, it can be resised
+
 ## Code quality
 
 - We use pre-commit hooks for code formatting. Hooks must not require a Docker image (for example,

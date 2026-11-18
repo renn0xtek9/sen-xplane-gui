@@ -12,38 +12,35 @@ namespace hmi {
 
 class PluginManager final : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QVariantList plugins READ plugins NOTIFY pluginsChanged)
-  Q_PROPERTY(QVariantList panels READ panels NOTIFY pluginsChanged)
+  Q_PROPERTY(QVariantList availableViews READ availableViews NOTIFY availableViewsChanged)
+  Q_PROPERTY(QVariantList instantiatedViews READ instantiatedViews NOTIFY instantiatedViewsChanged)
 
 public:
   explicit PluginManager(std::unique_ptr<PluginInstanceProviderInterface>&& instanceProvider,
                          std::vector<std::shared_ptr<PluginFactory>>& pluginFactories, QObject* parent = nullptr);
 
-  [[nodiscard]] QVariantList plugins() const;
-  [[nodiscard]] QVariantList panels() const;
+  [[nodiscard]] QVariantList availableViews() const;
+  [[nodiscard]] QVariantList instantiatedViews() const;
   [[nodiscard]] bool hasPlugin(const QString& pluginId) const;
   [[nodiscard]] std::vector<std::shared_ptr<Plugin>> getPlugins() const;
 
   void addFactory(const std::shared_ptr<PluginFactory>& factory);
 
-  Q_INVOKABLE void setPluginActive(const QString& pluginId, bool active);
-  Q_INVOKABLE void setPanelVisible(const QString& pluginId, const QString& panelId, bool visible);
+  Q_INVOKABLE void instantiateView(const QString& pluginId, const QString& viewId);
 
 signals:
-  void pluginsChanged();
+  void availableViewsChanged();
+  void instantiatedViewsChanged();
 
 private:
   void loadPlugins();
-  void updatePluginProperty(const QString& pluginId, const QString& property, const QVariant& value);
-  void updatePanelProperty(const QString& pluginId, const QString& panelId, const QString& property,
-                           const QVariant& value);
+  void tryLoadingPluginWithAnyFactory(QObject* instance);
 
-  void tryLoadingPluginWithAnyFactory(QObject* instanc);
-
-  QVariantList plugins_;
   std::vector<std::shared_ptr<Plugin>> hmi_plugins_;
   std::vector<std::shared_ptr<PluginFactory>> plugin_factories_;
 
   std::unique_ptr<PluginInstanceProviderInterface> instance_provider_;
+
+  QVariantList instantiatedViews_;
 };
 } // namespace hmi
