@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QMetaObject>
+#include <Qt>
 
 #include <cmath>
 #include <numbers>

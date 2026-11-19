@@ -4,7 +4,6 @@
 #include <hmi/plugin_factory_interface.h>
 #include <hmi/plugin_instance_provider_interface.h>
 #include <hmi/plugin_interface.h>
-// #include <hmi/pluginmanager.h>
 
 #include "dummy_frontend.h"
 

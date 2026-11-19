@@ -14,9 +14,11 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_instance_provider_interface.h>
 #include <hmi/plugin_interface.h>
 #include <hmi/pluginmanager.h>
 
@@ -53,8 +55,7 @@ std::vector<std::shared_ptr<Plugin>> PluginManager::getPlugins() const {
 }
 
 bool PluginManager::hasPlugin(const QString& pluginId) const {
-  return std::ranges::any_of(hmi_plugins_,
-                             [&pluginId](const auto& hmi_plugin) { return hmi_plugin->id() == pluginId; });
+  return std::ranges::any_of(hmi_plugins_, [&pluginId](const auto& hmiPlugin) { return hmiPlugin->id() == pluginId; });
 }
 
 void PluginManager::tryLoadingPluginWithAnyFactory(QObject* instance) {

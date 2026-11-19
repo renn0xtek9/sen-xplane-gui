@@ -8,10 +8,12 @@
 
 #include <cstdlib>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <hmi/plugin_factory_interface.h>
 #include <hmi/plugin_instance_provider.h>
+#include <hmi/plugin_instance_provider_interface.h>
 #include <hmi/plugin_sen_factory.h>
 #include <hmi/pluginmanager.h>
 #include <hmi/sen_bridge_controller.h>

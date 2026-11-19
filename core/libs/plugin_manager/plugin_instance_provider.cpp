@@ -1,14 +1,19 @@
 #include <QDir>
 #include <QFileInfo>
+#include <QLibrary>
 #include <QObject>
 #include <QPluginLoader>
 #include <QVector>
+#include <QtCore/qcontainerfwd.h>
 #include <QtLogging>
+
+#include <utility>
 
 #include <hmi/plugin_instance_provider.h>
 namespace hmi {
 
-PluginInstanceProvider::PluginInstanceProvider(const QString& pluginDirectory) : plugin_directory_{pluginDirectory} {}
+PluginInstanceProvider::PluginInstanceProvider(QString pluginDirectory)
+    : plugin_directory_{std::move(pluginDirectory)} {}
 
 QVector<QObject*> PluginInstanceProvider::getPluginInstances() {
 

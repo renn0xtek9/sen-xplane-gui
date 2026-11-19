@@ -3,6 +3,7 @@
 #include <QList>
 #include <QObject>
 #include <QPluginLoader>
+#include <QString>
 #include <QVector>
 
 #include <hmi/plugin_instance_provider_interface.h>
@@ -10,7 +11,7 @@ namespace hmi {
 
 class PluginInstanceProvider : public PluginInstanceProviderInterface {
 public:
-  PluginInstanceProvider(const QString& pluginDirectory);
+  PluginInstanceProvider(QString pluginDirectory);
   ~PluginInstanceProvider() override = default;
 
   [[nodiscard]] QVector<QObject*> getPluginInstances() final;

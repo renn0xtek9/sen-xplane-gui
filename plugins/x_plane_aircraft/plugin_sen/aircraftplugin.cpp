@@ -6,6 +6,7 @@
 #include <QtLogging>
 
 #include <memory>
+#include <utility>
 
 #include <sen/kernel/component.h>
 
@@ -42,6 +43,7 @@ QList<hmi::PluginView> AircraftPlugin::views() const {
 }
 
 QObject* AircraftPlugin::instantiateView(const QString viewId, QObject* parent) {
+  std::ignore = viewId;
   createSenComponentIfUnitialized();
   aircraft_frontend_ = new AircraftFrontend(parent);
   m_sen_component->addAircraftFrontend(aircraft_frontend_);

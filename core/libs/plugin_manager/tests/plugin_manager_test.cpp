@@ -1,7 +1,11 @@
+#include <QObject>
+#include <QUrl>
+#include <Qt>
+
 #include <memory>
+#include <vector>
 
 #include <hmi/plugin_factory_interface.h>
-#include <hmi/plugin_interface.h>
 #include <hmi/pluginmanager.h>
 
 #include "dummy_plugins.h"
@@ -11,9 +15,7 @@ using namespace testing;
 TEST(PluginManager, InitializedWithNonExistingPath) {
   std::vector<std::shared_ptr<hmi::PluginFactory>> factories{};
 
-  std::unique_ptr<hmi::PluginInstanceProviderInterface> dummyProvider = std::make_unique<DummyInstanceProvider>();
-
-  hmi::PluginManager unit(std::move(dummyProvider), factories, nullptr);
+  const hmi::PluginManager unit(std::make_unique<DummyInstanceProvider>(), factories, nullptr);
 }
 
 TEST(PluginManager, PluginNoViewNoBackend) {
@@ -21,9 +23,7 @@ TEST(PluginManager, PluginNoViewNoBackend) {
 
   std::vector<std::shared_ptr<hmi::PluginFactory>> factories{factory};
 
-  std::unique_ptr<hmi::PluginInstanceProviderInterface> dummyProvider = std::make_unique<DummyInstanceProvider>();
-
-  hmi::PluginManager unit(std::move(dummyProvider), factories, nullptr);
+  const hmi::PluginManager unit(std::make_unique<DummyInstanceProvider>(), factories, nullptr);
   EXPECT_EQ(unit.getPlugins().size(), 0U);
   EXPECT_EQ(unit.availableViews().size(), 0U);
   EXPECT_EQ(unit.instantiatedViews().size(), 0U);
@@ -35,10 +35,7 @@ TEST(PluginManager, PluginWithSingleView) {
 
   std::vector<std::shared_ptr<hmi::PluginFactory>> factories{factory};
 
-  std::unique_ptr<hmi::PluginInstanceProviderInterface> instanceProvider =
-      std::make_unique<PluginSingleViewInstanceProvider>();
-
-  hmi::PluginManager unit(std::move(instanceProvider), factories, nullptr);
+  hmi::PluginManager unit(std::make_unique<PluginSingleViewInstanceProvider>(), factories, nullptr);
   EXPECT_EQ(unit.getPlugins().size(), 1U);
   EXPECT_TRUE(unit.hasPlugin("PluginWithSingleView"));
   EXPECT_EQ(unit.availableViews().size(), 1U);
