@@ -6,6 +6,7 @@
 #include <QtLogging>
 
 #include <memory>
+#include <utility>
 
 #include <sen/kernel/component.h>
 
@@ -17,7 +18,7 @@
 
 AircraftPlugin::~AircraftPlugin() {
   qCritical() << "Aircraft Plugin destroyed";
-  delete aircraft_backend_;
+  delete aircraft_frontend_;
 }
 
 QString AircraftPlugin::id() const {
@@ -32,7 +33,7 @@ QString AircraftPlugin::description() const {
   return "Simulated aircraft telemetry.";
 }
 
-QList<hmi::PluginPanel> AircraftPlugin::panels() const {
+QList<hmi::PluginView> AircraftPlugin::views() const {
   return {{.id = QStringLiteral("aircraft"),
            .title = QStringLiteral("Aircraft"),
            .source = QUrl(QStringLiteral("qrc:/aircraft/AircraftPanel.qml"))},
@@ -41,18 +42,23 @@ QList<hmi::PluginPanel> AircraftPlugin::panels() const {
            .source = QUrl(QStringLiteral("qrc:/aircraft/AltitudeGraph.qml"))}};
 }
 
-QObject* AircraftPlugin::createBackend(QObject* parent) {
-
-  m_sen_component = std::make_shared<XplaneAircraftHmiSenComponent>();
-  aircraft_backend_ = new AircraftFrontend(parent);
-  m_sen_component->setAircraftFrontend(aircraft_backend_);
-  return aircraft_backend_;
+QObject* AircraftPlugin::instantiateView(const QString viewId, QObject* parent) {
+  std::ignore = viewId;
+  createSenComponentIfUnitialized();
+  aircraft_frontend_ = new AircraftFrontend(parent);
+  m_sen_component->addAircraftFrontend(aircraft_frontend_);
+  return aircraft_frontend_;
 }
 
-std::shared_ptr<sen::kernel::Component> AircraftPlugin::getSenComponent() const {
-  if (m_sen_component == nullptr) {
-    qCritical() << "Sen Component not yet initialized!";
-  }
-  qInfo() << "Returning Sen component: " << m_sen_component.get();
+std::shared_ptr<sen::kernel::Component> AircraftPlugin::getSenComponent() {
+  createSenComponentIfUnitialized();
   return m_sen_component;
+}
+
+void AircraftPlugin::createSenComponentIfUnitialized() {
+  if (m_sen_component == nullptr) {
+    m_sen_component = std::make_shared<XplaneAircraftHmiSenComponent>();
+  } else {
+    qInfo() << "Sen component already initialized for plugin: " << name();
+  }
 }

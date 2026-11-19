@@ -2,7 +2,9 @@ add_library(
     plugin_manager
     SHARED
     pluginmanager.cpp
+    plugin_instance_provider.cpp
     public/hmi/pluginmanager.h
+    public/hmi/plugin_instance_provider.h
 )
 target_include_directories(
     plugin_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
@@ -18,3 +20,7 @@ add_library(
     ALIAS
     plugin_manager
 )
+
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

@@ -7,7 +7,7 @@
 
 namespace hmi {
 
-struct PluginPanel {
+struct PluginView {
   QString id;
   QString title;
   QUrl source;
@@ -20,8 +20,8 @@ public:
   [[nodiscard]] virtual QString id() const = 0;
   [[nodiscard]] virtual QString name() const = 0;
   [[nodiscard]] virtual QString description() const = 0;
-  [[nodiscard]] virtual QList<PluginPanel> panels() const = 0;
-  [[nodiscard]] virtual QObject* createBackend(QObject* parent) = 0;
+  [[nodiscard]] virtual QList<PluginView> views() const = 0;
+  [[nodiscard]] virtual QObject* instantiateView(const QString viewId, QObject* parent) = 0;
 };
 
 } // namespace hmi

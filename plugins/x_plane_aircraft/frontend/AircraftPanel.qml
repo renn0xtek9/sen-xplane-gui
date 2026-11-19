@@ -5,7 +5,7 @@ import QtQuick.Layouts
 Rectangle {
     id: aircraftPanel
 
-    property var backend
+    property var control
 
     anchors.fill: parent
     radius: 6
@@ -41,7 +41,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumHeight: 160
-            backend: aircraftPanel.backend
+            control: aircraftPanel.control
         }
 
         RowLayout {
@@ -58,7 +58,7 @@ Rectangle {
                 }
 
                 Label {
-                    text: backend ? backend.altitude.toFixed(1) + " m" : "--"
+                    text: control ? control.altitude.toFixed(1) + " m" : "--"
                     color: "#75d3ad"
                     font.family: "monospace"
                     font.pixelSize: 24
@@ -75,7 +75,7 @@ Rectangle {
                 }
 
                 Label {
-                    text: backend ? backend.speed.toFixed(1) + " km/h" : "--"
+                    text: control ? control.speed.toFixed(1) + " km/h" : "--"
                     color: "#75d3ad"
                     font.family: "monospace"
                     font.pixelSize: 24

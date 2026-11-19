@@ -3,8 +3,8 @@ import QtQuick
 Canvas {
     id: graph
 
-    property var backend
-    property var samples: backend ? backend.altitudeHistory : []
+    property var control
+    property var samples: control ? control.altitudeHistory : []
 
     onSamplesChanged: requestPaint()
 

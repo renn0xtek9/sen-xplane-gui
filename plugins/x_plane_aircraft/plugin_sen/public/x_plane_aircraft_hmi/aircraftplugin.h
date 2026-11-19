@@ -18,11 +18,13 @@ public:
   [[nodiscard]] QString id() const override;
   [[nodiscard]] QString name() const override;
   [[nodiscard]] QString description() const override;
-  [[nodiscard]] QList<hmi::PluginPanel> panels() const override;
-  [[nodiscard]] QObject* createBackend(QObject* parent) override;
-  [[nodiscard]] std::shared_ptr<sen::kernel::Component> getSenComponent() const override;
+  [[nodiscard]] QList<hmi::PluginView> views() const override;
+  [[nodiscard]] QObject* instantiateView(const QString viewId, QObject* parent) override;
+  [[nodiscard]] std::shared_ptr<sen::kernel::Component> getSenComponent() override;
 
 private:
-  AircraftFrontend* aircraft_backend_{};
+  void createSenComponentIfUnitialized();
+
+  AircraftFrontend* aircraft_frontend_{};
   std::shared_ptr<XplaneAircraftHmiSenComponent> m_sen_component;
 };

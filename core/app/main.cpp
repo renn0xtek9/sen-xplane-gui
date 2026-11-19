@@ -8,9 +8,12 @@
 
 #include <cstdlib>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <hmi/plugin_factory_interface.h>
+#include <hmi/plugin_instance_provider.h>
+#include <hmi/plugin_instance_provider_interface.h>
 #include <hmi/plugin_sen_factory.h>
 #include <hmi/pluginmanager.h>
 #include <hmi/sen_bridge_controller.h>
@@ -48,8 +51,12 @@ int main(int argc, char* argv[]) {
 
   const QString pluginDirectory = QDir(QCoreApplication::applicationDirPath()).filePath("plugins");
   auto pluginSenFactory = std::make_shared<hmi::PluginSenFactory>();
+
+  std::unique_ptr<hmi::PluginInstanceProviderInterface> filePluginProvider =
+      std::make_unique<hmi::PluginInstanceProvider>(pluginDirectory);
+
   std::vector<std::shared_ptr<hmi::PluginFactory>> pluginFactories = {pluginSenFactory};
-  hmi::PluginManager pluginManager(pluginDirectory, pluginFactories);
+  hmi::PluginManager pluginManager(std::move(filePluginProvider), pluginFactories);
   const bool smokeTest = QGuiApplication::arguments().contains("--smoke-test");
   if (smokeTest && !pluginManager.hasPlugin("x_plane_aircraft")) {
     return EXIT_FAILURE;
