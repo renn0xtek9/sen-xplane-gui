@@ -1,4 +1,6 @@
 load:
+  - name: ether
+    group: 1
   - name: shell
     group: 2
     open: [x_plane.aircraft] # to see the created objects
@@ -12,4 +14,4 @@ build:
       - class: x_plane_node.XPlaneNodeImpl
         name: xplaneNode
         bus: x_plane.aircraft
-        aircrarftName: default aricraft name
+        aircaftName: default aircraft name

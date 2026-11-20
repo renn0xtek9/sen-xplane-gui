@@ -7,7 +7,7 @@
 
 namespace x_plane_node {
 
-class XPlaneNodeImpl : public XPlaneNodeBase {
+class SEN_EXPORT XPlaneNodeImpl : public XPlaneNodeBase {
 public:
   SEN_NOCOPY_NOMOVE(XPlaneNodeImpl)
 

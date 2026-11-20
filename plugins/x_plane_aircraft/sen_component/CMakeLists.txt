@@ -18,6 +18,7 @@ add_sen_package(
     # PRIVATE_DEPS
     DEPS
     x_plane_plugin_ui
+    x_plane_node
     sen::util
     Qt6::Core
 )

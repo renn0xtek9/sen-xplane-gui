@@ -36,4 +36,5 @@ qt_standard_project_setup(
 )
 
 add_subdirectory(core)
+add_subdirectory(third_party/x_plane_node)
 add_subdirectory(plugins/x_plane_aircraft)
