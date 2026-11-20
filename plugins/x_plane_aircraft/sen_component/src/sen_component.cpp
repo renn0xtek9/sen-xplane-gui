@@ -1,18 +1,18 @@
 #include <QDebug>
 #include <QMetaObject>
 #include <Qt>
+#include <QtLogging>
 
-#include <cmath>
-#include <numbers>
+#include <string>
 
 #include <sen/core/base/duration.h>
 #include <sen/core/io/util.h>
-#include <sen/core/meta/var.h>
+#include <sen/core/obj/object_list.h>
 #include <sen/kernel/component.h>
 #include <sen/kernel/component_api.h>
 
-#include <stl/sen/kernel/basic_types.stl.h>
 #include <stl/x_plane_aircraft_hmi/config.stl.h>
+#include <stl/x_plane_node/x_plane_node.stl.h>
 
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/sen_component.h>
@@ -26,32 +26,44 @@ sen::kernel::FuncResult XplaneAircraftHmiSenComponent::load([[maybe_unused]] sen
   config_ = sen::toValue<x_plane_aircraft_hmi::Configuration>(api.getConfig());
   return done();
 }
-
-sen::kernel::PassResult XplaneAircraftHmiSenComponent::init([[maybe_unused]] sen::kernel::InitApi&& /*api*/) {
+// NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): Required non-movable Sen lifecycle API.
+sen::kernel::PassResult XplaneAircraftHmiSenComponent::init(sen::kernel::InitApi&& api) {
+  api.getTypes().add(x_plane_node::XPlaneNodeInterface::meta());
+  auto* workQueue = api.getWorkQueue();
+  x_plane_subscription_ = api.selectAllFrom<x_plane_node::XPlaneNodeInterface>(
+      std::string{"x_plane.aircraft"},
+      [this, workQueue](const sen::ObjectList<x_plane_node::XPlaneNodeInterface>::Iterators& addedObjects) {
+        for (auto* object : addedObjects) {
+          qInfo() << "Discovered X-Plane node:" << object->asObject().getName();
+          const auto updatePose = [this, object]() {
+            const auto& pose = object->getPose();
+            altitude_ = static_cast<double>(pose.elevationAboveMsl);
+            speed_ = static_cast<double>(pose.groundSpeed);
+            updateUIWithNewValues();
+          };
+          updatePose();
+          pose_callbacks_.push_back(object->onPoseChanged(sen::PropertyCallback{
+              workQueue,
+              sen::PropertyCallback::CallbackFunc{sen::PropertyCallback::Function{[updatePose]() { updatePose(); }}}}));
+        }
+      },
+      [this]([[maybe_unused]] const sen::ObjectList<x_plane_node::XPlaneNodeInterface>::Iterators& removedObjects) {
+        pose_callbacks_.clear();
+      });
   return done();
 }
 
 sen::kernel::FuncResult XplaneAircraftHmiSenComponent::run([[maybe_unused]] sen::kernel::RunApi& api) {
-  const sen::kernel::BusAddress targetBus{.sessionName = "hmi", .busName = "mybus"};
-  auto source = api.getSource(targetBus);
-
-  return api.execLoop(sen::Duration::fromHertz(1.0), [this]() {
-    this->updateUIWithNewValues();
-    this->counter++;
-  });
+  return api.execLoop(sen::Duration::fromHertz(1.0), [this]() { this->updateUIWithNewValues(); });
 }
 
 sen::kernel::FuncResult XplaneAircraftHmiSenComponent::unload([[maybe_unused]] sen::kernel::UnloadApi&& /*api*/) {
+  pose_callbacks_.clear();
+  x_plane_subscription_.reset();
   return done();
 }
 
 void XplaneAircraftHmiSenComponent::updateUIWithNewValues() {
-  // TODO this calculation belong to the aircraft_backend
-  const auto elapsedMilliseconds = static_cast<double>(this->counter * 1000);
-  const double phase = 2.0 * std::numbers::pi * elapsedMilliseconds;
-  altitude_ = 1000.0 + (10.0 * std::sin(phase / 10000.0));
-  speed_ = 200.0 + (10.0 * std::sin(phase / 5000.0));
-
   for (auto* backend : aircraft_backends_) {
     QMetaObject::invokeMethod(
         backend,

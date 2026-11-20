@@ -4,4 +4,5 @@ target_link_libraries(
     x_plane_plugin_sen_component_smoke_test
     PRIVATE sen::kernel
             x_plane_plugin_sen_component
+            x_plane_node
 )

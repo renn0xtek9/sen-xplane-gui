@@ -7,6 +7,10 @@ project(
               C
 )
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 if(DEFINED
    ENV{SEN_PATH}
 )
@@ -31,6 +35,7 @@ add_sen_package(
     "0.0.1"
     DESCRIPTION
     "<package description goes here>"
+    PUBLIC_SYMBOLS
     SOURCES
     src/x_plane_node.h
     src/x_plane_node.cpp
