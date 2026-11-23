@@ -26,7 +26,7 @@ namespace hmi {
 
 PluginManager::PluginManager(std::unique_ptr<PluginInstanceProviderInterface>&& instanceProvider,
                              std::vector<std::shared_ptr<PluginFactory>>& pluginFactories, QObject* parent)
-    : instance_provider_{std::move(instanceProvider)}, plugin_factories_(pluginFactories), QObject(parent) {
+    : QObject(parent), instance_provider_{std::move(instanceProvider)}, plugin_factories_(pluginFactories) {
   loadPlugins();
 }
 
@@ -92,7 +92,7 @@ void PluginManager::instantiateView(const QString& pluginId, const QString& view
     return;
   }
 
-  auto* object = (*pluginIt)->instantiateView(viewId, this);
+  auto* object = (*pluginIt)->instantiateView(viewId, *this);
   if (object == nullptr) {
     return;
   }

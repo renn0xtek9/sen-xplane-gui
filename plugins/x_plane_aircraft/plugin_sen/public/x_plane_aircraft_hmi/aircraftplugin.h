@@ -19,7 +19,7 @@ public:
   [[nodiscard]] QString name() const override;
   [[nodiscard]] QString description() const override;
   [[nodiscard]] QList<hmi::PluginView> views() const override;
-  [[nodiscard]] QObject* instantiateView(const QString viewId, QObject* parent) override;
+  [[nodiscard]] QObject* instantiateView(const QString viewId, hmi::PluginManagerInterface& pluginManager) override;
   [[nodiscard]] std::shared_ptr<sen::kernel::Component> getSenComponent() override;
 
 private:

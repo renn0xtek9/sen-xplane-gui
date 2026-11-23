@@ -89,5 +89,11 @@ Rectangle {
             enabled: aircraftPanel.control !== null
             onClicked: aircraftPanel.control.increaseAltitude()
         }
+        Button {
+            text: "Open altitude graph"
+            Layout.alignment: Qt.AlignLeft
+            enabled: aircraftPanel.control !== null
+            onClicked: aircraftPanel.control.openGraphView()
+        }
     }
 }

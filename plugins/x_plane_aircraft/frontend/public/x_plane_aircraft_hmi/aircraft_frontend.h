@@ -8,6 +8,10 @@
 #include <QVariantList>
 #include <QVector>
 
+namespace hmi {
+class PluginManagerInterface;
+}
+
 class AircraftFrontend final : public QObject {
   Q_OBJECT
   Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY telemetryChanged)
@@ -15,12 +19,13 @@ class AircraftFrontend final : public QObject {
   Q_PROPERTY(QVariantList altitudeHistory READ altitudes NOTIFY altitudeTableChanged)
 
 public:
-  explicit AircraftFrontend(QObject* parent = nullptr);
+  explicit AircraftFrontend(QObject* parent = nullptr, hmi::PluginManagerInterface* pluginManager = nullptr);
 
   void setAltitude(const double&);
   void setSpeed(const double&);
 
   Q_INVOKABLE void increaseAltitude();
+  Q_INVOKABLE void openGraphView();
 
   [[nodiscard]] double altitude() const;
   [[nodiscard]] double speed() const;
@@ -33,6 +38,7 @@ signals:
   void increaseAltitudeRequested();
 
 private:
+  hmi::PluginManagerInterface* pluginManager_;
   QTimer timer_;
   double altitude_ = 1000.0;
   double speed_ = 200.0;

@@ -9,7 +9,11 @@ target_include_directories(
     x_plane_plugin_ui PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
 )
 
-target_link_libraries(x_plane_plugin_ui PRIVATE Qt6::Core)
+target_link_libraries(
+    x_plane_plugin_ui
+    PRIVATE hmi::plugin_interface
+            Qt6::Core
+)
 
 qt_add_resources(
     x_plane_plugin_ui

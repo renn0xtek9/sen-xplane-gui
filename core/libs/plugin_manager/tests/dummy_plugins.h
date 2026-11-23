@@ -4,6 +4,7 @@
 #include <hmi/plugin_factory_interface.h>
 #include <hmi/plugin_instance_provider_interface.h>
 #include <hmi/plugin_interface.h>
+#include <hmi/plugin_manager_interface.h>
 
 #include "dummy_frontend.h"
 
@@ -21,7 +22,9 @@ public:
   [[nodiscard]] QList<hmi::PluginView> views() const final {
     return {};
   }
-  [[nodiscard]] QObject* instantiateView(const QString viewId, QObject* parent) final {
+  [[nodiscard]] QObject* instantiateView(const QString viewId, hmi::PluginManagerInterface& pluginManager) final {
+    std::ignore = viewId;
+    std::ignore = pluginManager;
     return nullptr;
   }
 };
@@ -67,7 +70,9 @@ public:
     myview.source = QUrl("/some/source");
     return {myview};
   }
-  QObject* instantiateView(const QString viewId, QObject* parent) final {
+  QObject* instantiateView(const QString viewId, hmi::PluginManagerInterface& pluginManager) final {
+    std::ignore = viewId;
+    auto* parent = dynamic_cast<QObject*>(&pluginManager);
     return new DummyFrontend(parent);
   }
 };

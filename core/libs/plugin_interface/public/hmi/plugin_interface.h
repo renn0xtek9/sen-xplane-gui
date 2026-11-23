@@ -13,6 +13,8 @@ struct PluginView {
   QUrl source;
 };
 
+class PluginManagerInterface;
+
 class Plugin {
 public:
   virtual ~Plugin() = default;
@@ -21,7 +23,7 @@ public:
   [[nodiscard]] virtual QString name() const = 0;
   [[nodiscard]] virtual QString description() const = 0;
   [[nodiscard]] virtual QList<PluginView> views() const = 0;
-  [[nodiscard]] virtual QObject* instantiateView(const QString viewId, QObject* parent) = 0;
+  [[nodiscard]] virtual QObject* instantiateView(const QString viewId, PluginManagerInterface& pluginManager) = 0;
 };
 
 } // namespace hmi

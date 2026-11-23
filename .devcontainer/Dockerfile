@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     clang-tidy \
     clangd \
     curl \
+    gcovr \
+    gcc \
+    g++ \
     wget \
     gdb \
     git \
