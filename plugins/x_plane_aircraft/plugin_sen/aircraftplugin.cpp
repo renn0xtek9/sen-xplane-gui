@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <QUrl>
+#include <QtCore/qnamespace.h>
 #include <QtLogging>
 
 #include <memory>
@@ -47,6 +48,9 @@ QObject* AircraftPlugin::instantiateView(const QString viewId, QObject* parent) 
   createSenComponentIfUnitialized();
   aircraft_frontend_ = new AircraftFrontend(parent);
   m_sen_component->addAircraftFrontend(aircraft_frontend_);
+  QObject::connect(
+      aircraft_frontend_, &AircraftFrontend::increaseAltitudeRequested, aircraft_frontend_,
+      [senComponent = m_sen_component]() { senComponent->increaseAltitude(); }, Qt::QueuedConnection);
   return aircraft_frontend_;
 }
 

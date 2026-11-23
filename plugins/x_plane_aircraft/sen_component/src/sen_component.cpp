@@ -7,6 +7,7 @@
 
 #include <sen/core/base/duration.h>
 #include <sen/core/io/util.h>
+#include <sen/core/obj/detail/work_queue.h>
 #include <sen/core/obj/object_list.h>
 #include <sen/kernel/component.h>
 #include <sen/kernel/component_api.h>
@@ -29,11 +30,12 @@ sen::kernel::FuncResult XplaneAircraftHmiSenComponent::load([[maybe_unused]] sen
 // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): Required non-movable Sen lifecycle API.
 sen::kernel::PassResult XplaneAircraftHmiSenComponent::init(sen::kernel::InitApi&& api) {
   api.getTypes().add(x_plane_node::XPlaneNodeInterface::meta());
-  auto* workQueue = api.getWorkQueue();
+  work_queue_ = api.getWorkQueue();
   x_plane_subscription_ = api.selectAllFrom<x_plane_node::XPlaneNodeInterface>(
       std::string{"x_plane.aircraft"},
-      [this, workQueue](const sen::ObjectList<x_plane_node::XPlaneNodeInterface>::Iterators& addedObjects) {
+      [this](const sen::ObjectList<x_plane_node::XPlaneNodeInterface>::Iterators& addedObjects) {
         for (auto* object : addedObjects) {
+          x_plane_nodes_.push_back(object);
           qInfo() << "Discovered X-Plane node:" << object->asObject().getName();
           const auto updatePose = [this, object]() {
             const auto& pose = object->getPose();
@@ -43,14 +45,30 @@ sen::kernel::PassResult XplaneAircraftHmiSenComponent::init(sen::kernel::InitApi
           };
           updatePose();
           pose_callbacks_.push_back(object->onPoseChanged(sen::PropertyCallback{
-              workQueue,
+              work_queue_,
               sen::PropertyCallback::CallbackFunc{sen::PropertyCallback::Function{[updatePose]() { updatePose(); }}}}));
         }
       },
       [this]([[maybe_unused]] const sen::ObjectList<x_plane_node::XPlaneNodeInterface>::Iterators& removedObjects) {
         pose_callbacks_.clear();
+        x_plane_nodes_.clear();
       });
   return done();
+}
+
+void XplaneAircraftHmiSenComponent::increaseAltitude() {
+  if (work_queue_ == nullptr) {
+    qWarning() << "Cannot increase altitude before the Sen component is initialized";
+    return;
+  }
+
+  work_queue_->push(
+      [this]() {
+        for (auto* object : x_plane_nodes_) {
+          object->increaseAltitute({});
+        }
+      },
+      false);
 }
 
 sen::kernel::FuncResult XplaneAircraftHmiSenComponent::run([[maybe_unused]] sen::kernel::RunApi& api) {

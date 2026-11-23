@@ -20,6 +20,8 @@ public:
   void setAltitude(const double&);
   void setSpeed(const double&);
 
+  Q_INVOKABLE void increaseAltitude();
+
   [[nodiscard]] double altitude() const;
   [[nodiscard]] double speed() const;
 
@@ -28,6 +30,7 @@ public:
 signals:
   void telemetryChanged();
   void altitudeTableChanged();
+  void increaseAltitudeRequested();
 
 private:
   QTimer timer_;

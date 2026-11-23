@@ -15,11 +15,13 @@ public:
   XPlaneNodeImpl(const std::string& name, const sen::VarMap& args);
   ~XPlaneNodeImpl() override = default;
 
-public:
   void update(sen::kernel::RunApi& runApi) override;
 
 protected:
   int32_t counter_{};
+  float baseAltitude_{1000.0F};
+
+  void increaseAltituteImpl() override;
 };
 
 } // namespace x_plane_node

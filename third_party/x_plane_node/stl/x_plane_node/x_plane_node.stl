@@ -6,4 +6,6 @@ class XPlaneNode
 {
   var aircaftName : string       [writable,confirmed]; 
   var pose: AircraftPose [writable];
+
+  fn increaseAltitute();
 }

@@ -21,10 +21,17 @@ void XPlaneNodeImpl::update(sen::kernel::RunApi& runApi) {
   const auto elapsedMilliseconds = static_cast<double>(counter_) * 1000.0 / 30.0;
   const double phase = 2.0 * std::numbers::pi * elapsedMilliseconds;
   auto pose = getPose();
-  pose.elevationAboveMsl = static_cast<float>(1000.0 + (10.0 * std::sin(phase / 10000.0)));
+  pose.elevationAboveMsl = baseAltitude_ + static_cast<float>(10.0 * std::sin(phase / 10000.0));
   pose.groundSpeed = static_cast<float>(200.0 + (10.0 * std::sin(phase / 5000.0)));
   setNextPose(pose);
   counter_++;
+}
+
+void XPlaneNodeImpl::increaseAltituteImpl() {
+  baseAltitude_ += 100.0F;
+  auto pose = getPose();
+  pose.elevationAboveMsl = baseAltitude_;
+  setNextPose(pose);
 }
 
 SEN_EXPORT_CLASS(XPlaneNodeImpl)

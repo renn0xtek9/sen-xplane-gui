@@ -10,12 +10,17 @@
 
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
+namespace sen::impl {
+class WorkQueue;
+}
+
 class SEN_EXPORT XplaneAircraftHmiSenComponent : public sen::kernel::Component {
 public:
   XplaneAircraftHmiSenComponent() = default;
   ~XplaneAircraftHmiSenComponent() override = default;
 
   void addAircraftFrontend(AircraftFrontend* aircraftBackend);
+  void increaseAltitude();
 
   sen::kernel::FuncResult load([[maybe_unused]] sen::kernel::LoadApi&& api) override;
 
@@ -30,6 +35,8 @@ private:
   std::vector<AircraftFrontend*> aircraft_backends_{nullptr};
   std::shared_ptr<sen::Subscription<x_plane_node::XPlaneNodeInterface>> x_plane_subscription_;
   std::vector<sen::ConnectionGuard> pose_callbacks_;
+  std::vector<x_plane_node::XPlaneNodeInterface*> x_plane_nodes_;
+  sen::impl::WorkQueue* work_queue_{nullptr};
 
   void updateUIWithNewValues();
 

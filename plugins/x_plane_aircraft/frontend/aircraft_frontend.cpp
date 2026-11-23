@@ -21,6 +21,10 @@ double AircraftFrontend::speed() const {
   return speed_;
 }
 
+void AircraftFrontend::increaseAltitude() {
+  emit increaseAltitudeRequested();
+}
+
 void AircraftFrontend::setAltitude(const double& altitude) {
   if (altitude_ == altitude) {
     return;
