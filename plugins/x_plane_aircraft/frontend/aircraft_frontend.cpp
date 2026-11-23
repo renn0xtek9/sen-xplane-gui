@@ -7,9 +7,12 @@
 #include <QtCore/qcontainerfwd.h>
 #include <QtCore/qtmetamacros.h>
 
+#include <hmi/plugin_manager_interface.h>
+
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
-AircraftFrontend::AircraftFrontend(QObject* parent) : QObject(parent) {
+AircraftFrontend::AircraftFrontend(QObject* parent, hmi::PluginManagerInterface* pluginManager)
+    : QObject(parent), pluginManager_(pluginManager) {
   altitudes_.append(qMakePair(QTime::currentTime(), altitude_));
 }
 
@@ -23,6 +26,12 @@ double AircraftFrontend::speed() const {
 
 void AircraftFrontend::increaseAltitude() {
   emit increaseAltitudeRequested();
+}
+
+void AircraftFrontend::openGraphView() {
+  if (pluginManager_ != nullptr) {
+    pluginManager_->instantiateView(QStringLiteral("x_plane_aircraft"), QStringLiteral("aircraftGraph"));
+  }
 }
 
 void AircraftFrontend::setAltitude(const double& altitude) {

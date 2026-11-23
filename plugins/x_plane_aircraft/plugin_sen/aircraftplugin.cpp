@@ -12,6 +12,7 @@
 #include <sen/kernel/component.h>
 
 #include <hmi/plugin_interface.h>
+#include <hmi/plugin_manager_interface.h>
 
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 #include <x_plane_aircraft_hmi/aircraftplugin.h>
@@ -43,10 +44,11 @@ QList<hmi::PluginView> AircraftPlugin::views() const {
            .source = QUrl(QStringLiteral("qrc:/aircraft/AltitudeGraph.qml"))}};
 }
 
-QObject* AircraftPlugin::instantiateView(const QString viewId, QObject* parent) {
+QObject* AircraftPlugin::instantiateView(const QString viewId, hmi::PluginManagerInterface& pluginManager) {
   std::ignore = viewId;
   createSenComponentIfUnitialized();
-  aircraft_frontend_ = new AircraftFrontend(parent);
+  auto* parent = dynamic_cast<QObject*>(&pluginManager);
+  aircraft_frontend_ = new AircraftFrontend(parent, &pluginManager);
   m_sen_component->addAircraftFrontend(aircraft_frontend_);
   QObject::connect(
       aircraft_frontend_, &AircraftFrontend::increaseAltitudeRequested, aircraft_frontend_,
