@@ -112,3 +112,19 @@ The plugin provide with two views:
 
 - AircraftPanel.qml that shows current aircraft data (atltitude speed etc.)
 - AltitudeGraph.qml that shows a graph of altitude over the last then seconds.
+
+## Qt and Sen component communication
+
+Qt UI objects run on the Qt main event loop, while a plugin Sen component executes
+in the Sen component scheduler. UI actions must therefore never call Sen objects
+or wait for middleware responses directly.
+
+For the aircraft altitude command, `AircraftPanel.qml` invokes
+`AircraftFrontend::increaseAltitude()`. The frontend emits
+`increaseAltitudeRequested()`, and `AircraftPlugin::instantiateView()` queues that
+signal to a lambda owned by the frontend so that the Sen component call is kept
+off the signal implementation path. `XplaneAircraftHmiSenComponent::increaseAltitude()`
+then posts a small task onto the Sen `WorkQueue`. The work queue executes the
+remote `increaseAltitute` method on the Sen scheduler, allowing the Qt GUI thread
+to remain responsive while preserving Sen's thread model. Pose property callbacks
+return telemetry to Qt through `QMetaObject::invokeMethod(..., Qt::QueuedConnection)`.

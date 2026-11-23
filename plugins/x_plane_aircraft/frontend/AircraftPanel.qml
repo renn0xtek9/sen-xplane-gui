@@ -82,5 +82,12 @@ Rectangle {
                 }
             }
         }
+
+        Button {
+            text: "Increase altitude"
+            Layout.alignment: Qt.AlignLeft
+            enabled: aircraftPanel.control !== null
+            onClicked: aircraftPanel.control.increaseAltitude()
+        }
     }
 }
