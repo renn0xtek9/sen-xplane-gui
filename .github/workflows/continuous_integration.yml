@@ -13,8 +13,8 @@ jobs:
     name: "Update environments"
     uses: ./.github/workflows/devcontainer.yml
 
-  build-pipeline:
-    name: "Build pipeline"
+  release-build-pipeline:
+    name: "Release build pipeline"
     runs-on: self-hosted
     needs:
       - update-environments
@@ -42,3 +42,26 @@ jobs:
         working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
         run: |
           run-clang-tidy -p build/release '^(?!.*(?:mocs_compilation\.cpp$|_qmltyperegistrations\.cpp$|/\.qt/rcc/|/\.rcc/))' -j 4
+
+  debug-build-pipeline:
+    name: "Debug build pipeline"
+    runs-on: self-hosted
+    needs:
+      - update-environments
+    if: ${{ always() && (needs.update-environments.result == 'success' || needs.update-environments.result == 'skipped') }}
+    container:
+      image: 192.168.178.39:5443/sen-xplane-gui:0.0.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: _work_system/
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Build third party
+        working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
+        run: cd third_party/x_plane_node/ && cmake -S . -B build && cmake --build build
+      - name: Build project
+        working-directory: /home/github-runner/sen-xplane-gui/_work/sen-xplane-gui/sen-xplane-gui/_work_system
+        run: |
+          cmake --preset debug 
+          cmake --build build/debug 
+          cmake --build build/debug/ --target test
