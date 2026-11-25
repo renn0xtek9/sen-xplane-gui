@@ -10,8 +10,8 @@ qt_add_qml_module(
     VERSION
     1.0
     QML_FILES
-    AircrarftPanelEval.qml
-    AircrarftGraphEval.qml
+    AircraftPanelEval.qml
+    AircraftGraphEval.qml
 )
 
 target_link_libraries(

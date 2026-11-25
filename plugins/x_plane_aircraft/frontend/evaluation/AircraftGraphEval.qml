@@ -69,8 +69,8 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 Layout.minimumWidth: 400
                 Layout.preferredWidth: 600
-                source: "qrc:/aircraft/AircraftPanel.qml"
-                onLoaded: item.backend = aircraftFrontend
+                source: "qrc:/aircraft/AltitudeGraph.qml"
+                onLoaded: item.control = aircraftFrontend
             }
         }
     }
