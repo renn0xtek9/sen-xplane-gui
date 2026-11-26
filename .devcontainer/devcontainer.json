@@ -30,8 +30,14 @@
         "Elan8.spec42",
         "llvm-vs-code-extensions.vscode-clangd",
         "ms-vscode.cmake-tools",
-        "ms-vscode.cpptools"
-      ]
+        "ms-vscode.cpptools",
+        "theqtcompany.qt-core",
+        "theqtcompany.qt-cpp",
+        "theqtcompany.qt-cpp-pack"
+      ],
+      "settings": {
+        "qt-qml.qmlls.customExePath": "/usr/lib/qt6/bin/qmlls"
+      }
     }
   }
 }

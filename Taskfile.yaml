@@ -2,6 +2,8 @@ version: "3"
 
 vars:
   BUILD_DIR: build
+  RELEASE_BUILD_DIR: "{{.BUILD_DIR}}/release"
+  DEBUG_BUILD_DIR: "{{.BUILD_DIR}}/debug"
 
 tasks:
   formatting:
@@ -20,27 +22,27 @@ tasks:
     desc: Configure and build the release preset, then run tests
     cmds:
       - cmake --preset release
-      - cmake --build build/release
-      - cmake --build build/release --target test
+      - cmake --build {{.RELEASE_BUILD_DIR}}
+      - cmake --build {{.RELEASE_BUILD_DIR}} --target test
 
   build-debug:
     desc: Configure and build the debug preset, then run tests
     cmds:
       - cmake --preset debug
-      - cmake --build build/debug
-      - cmake --build build/debug --target test
+      - cmake --build {{.BUILD_DIR}}/debug
+      - cmake --build {{.BUILD_DIR}}/debug --target test
 
   clang-tidy:
     desc: Run clang-tidy against the release build
     cmds:
-      - run-clang-tidy -p build/release '^(?!.*(?:mocs_compilation\.cpp$|_qmltyperegistrations\.cpp$|/\.qt/rcc/|/\.rcc/))' -j 4
+      - run-clang-tidy -p {{.RELEASE_BUILD_DIR}} '^(?!.*(?:mocs_compilation\.cpp$|_qmltyperegistrations\.cpp$|/\.qt/rcc/|/\.rcc/))' -j 4
 
   code-coverage:
     desc: Build debug, run code-quality checks, and open the coverage report
     cmds:
       - cmake --preset debug
-      - cmake --build build/debug
-      - cmake --build build/debug --target code-coverage
-      - cmd: ctest --test-dir build/debug -R '^code-quality$' --output-on-failure
+      - cmake --build {{.DEBUG_BUILD_DIR}}
+      - cmake --build {{.DEBUG_BUILD_DIR}} --target code-coverage
+      - cmd: ctest --test-dir {{.DEBUG_BUILD_DIR}} -R '^code-quality$' --output-on-failure
         ignore_error: true
-      - cmd: echo "Coverage report {{ .BUILD_DIR}}/debug/coverage-report/index.html"
+      - cmd: echo "Coverage report {{.DEBUG_BUILD_DIR}}/coverage-report/index.html"
