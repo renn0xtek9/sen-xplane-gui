@@ -1,0 +1,46 @@
+version: "3"
+
+vars:
+  BUILD_DIR: build
+
+tasks:
+  formatting:
+    desc: Run all repository formatting and validation hooks
+    cmds:
+      - pre-commit run --all-files
+
+  build-third-party:
+    desc: Build the bundled X-Plane node
+    dir: third_party/x_plane_node
+    cmds:
+      - cmake -S . -B build
+      - cmake --build build
+
+  build-release:
+    desc: Configure and build the release preset, then run tests
+    cmds:
+      - cmake --preset release
+      - cmake --build build/release
+      - cmake --build build/release --target test
+
+  build-debug:
+    desc: Configure and build the debug preset, then run tests
+    cmds:
+      - cmake --preset debug
+      - cmake --build build/debug
+      - cmake --build build/debug --target test
+
+  clang-tidy:
+    desc: Run clang-tidy against the release build
+    cmds:
+      - run-clang-tidy -p build/release '^(?!.*(?:mocs_compilation\.cpp$|_qmltyperegistrations\.cpp$|/\.qt/rcc/|/\.rcc/))' -j 4
+
+  code-coverage:
+    desc: Build debug, run code-quality checks, and open the coverage report
+    cmds:
+      - cmake --preset debug
+      - cmake --build build/debug
+      - cmake --build build/debug --target code-coverage
+      - cmd: ctest --test-dir build/debug -R '^code-quality$' --output-on-failure
+        ignore_error: true
+      - cmd: echo "Coverage report {{ .BUILD_DIR}}/debug/coverage-report/index.html"
