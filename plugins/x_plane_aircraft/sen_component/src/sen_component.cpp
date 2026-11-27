@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QMetaObject>
+#include <QTime>
 #include <Qt>
 #include <QtLogging>
 
@@ -86,7 +87,7 @@ void XplaneAircraftHmiSenComponent::updateUIWithNewValues() {
     QMetaObject::invokeMethod(
         backend,
         [frontend = backend, this]() {
-          frontend->setAltitude(altitude_);
+          frontend->setAltitude(altitude_, QTime::currentTime());
           frontend->setSpeed(speed_);
         },
         Qt::QueuedConnection);

@@ -77,7 +77,7 @@ Each plugins has a
 - `hmi_plugin_sen` folder containing the HmiPluginSen implementation
 - `hmi_sen_component` folder containing the SenComponent implementation
 - `frontend` containing the pure Qt/QML frontend implmentation
-  - `evaluation` subfolder containing executable incorporating the frontend with additional element to show its behavior.
+  - `validation` subfolder containing executable incorporating the frontend with additional element to show its behavior.
 
 ## HMI Software architecture
 

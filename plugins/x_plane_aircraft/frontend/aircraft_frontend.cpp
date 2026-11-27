@@ -12,9 +12,7 @@
 #include <x_plane_aircraft_hmi/aircraft_frontend.h>
 
 AircraftFrontend::AircraftFrontend(QObject* parent, hmi::PluginManagerInterface* pluginManager)
-    : QObject(parent), pluginManager_(pluginManager) {
-  altitudes_.append(qMakePair(QTime::currentTime(), altitude_));
-}
+    : QObject(parent), pluginManager_(pluginManager) {}
 
 double AircraftFrontend::altitude() const {
   return altitude_;
@@ -34,23 +32,20 @@ void AircraftFrontend::openGraphView() {
   }
 }
 
-void AircraftFrontend::setAltitude(const double& altitude) {
+void AircraftFrontend::setAltitude(const double& altitude, const QTime timeStamp) {
   if (altitude_ == altitude) {
     return;
   }
 
-  const QTime now = QTime::currentTime();
-  altitudes_.append(qMakePair(now, altitude));
+  altitudes_.append(qMakePair(timeStamp, altitude));
 
   while (!altitudes_.isEmpty()) {
-    int age = altitudes_.first().first.msecsTo(now);
-    if (age < 0) {
-      age += 24 * 60 * 60 * 1000;
-    }
-    if (age <= 5000) {
+    int ageOfFirst = altitudes_.first().first.msecsTo(timeStamp);
+    if (ageOfFirst >= 5000) {
+      altitudes_.removeFirst();
+    } else {
       break;
     }
-    altitudes_.removeFirst();
   }
 
   altitude_ = altitude;

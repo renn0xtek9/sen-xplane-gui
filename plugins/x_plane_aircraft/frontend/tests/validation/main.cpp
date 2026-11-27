@@ -12,15 +12,15 @@
 
 int main(int argc, char* argv[]) {
   QGuiApplication application(argc, argv);
-  QGuiApplication::setApplicationName("X-Plane Aircraft UI Evaluation");
+  QGuiApplication::setApplicationName("X-Plane Aircraft UI validation");
 
   Q_INIT_RESOURCE(aircraft_qml);
 
   AircraftFrontend aircraftFrontend;
   QQmlApplicationEngine engine;
   engine.rootContext()->setContextProperty("aircraftFrontend", &aircraftFrontend);
-  engine.loadFromModule("XPlaneAircraftEvaluation", "AircraftPanelEval");
-  engine.loadFromModule("XPlaneAircraftEvaluation", "AircraftGraphEval");
+  engine.loadFromModule("XPlaneAircraftvalidation", "AircraftPanelEval");
+  engine.loadFromModule("XPlaneAircraftvalidation", "AircraftGraphEval");
 
   if (engine.rootObjects().isEmpty()) {
     return EXIT_FAILURE;

@@ -33,4 +33,4 @@ set_target_properties(
                "${PROJECT_BINARY_DIR}/plugins"
 )
 
-add_subdirectory(evaluation)
+add_subdirectory(tests)

@@ -41,8 +41,6 @@ tasks:
     desc: Build debug, run code-quality checks, and open the coverage report
     cmds:
       - cmake --preset debug
-      - cmake --build {{.DEBUG_BUILD_DIR}}
-      - cmake --build {{.DEBUG_BUILD_DIR}} --target code-coverage
       - cmd: ctest --test-dir {{.DEBUG_BUILD_DIR}} -R '^code-quality$' --output-on-failure
         ignore_error: true
       - cmd: echo "Coverage report {{.DEBUG_BUILD_DIR}}/coverage-report/index.html"

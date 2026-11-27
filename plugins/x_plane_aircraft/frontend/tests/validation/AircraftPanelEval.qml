@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: 960
     height: 600
-    title: "X-Plane Aircraft UI Evaluation"
+    title: "X-Plane Aircraft UI validation"
     color: "#101b1c"
 
     ColumnLayout {
@@ -15,7 +15,7 @@ ApplicationWindow {
         spacing: 16
 
         Label {
-            text: "Aircraft panel evaluation"
+            text: "Aircraft panel validation"
             color: "#e7f0e8"
             font.pixelSize: 24
             font.weight: Font.DemiBold

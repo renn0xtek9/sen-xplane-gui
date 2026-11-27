@@ -21,7 +21,7 @@ class AircraftFrontend final : public QObject {
 public:
   explicit AircraftFrontend(QObject* parent = nullptr, hmi::PluginManagerInterface* pluginManager = nullptr);
 
-  void setAltitude(const double&);
+  void setAltitude(const double&, QTime timeStamp = QTime::currentTime());
   void setSpeed(const double&);
 
   Q_INVOKABLE void increaseAltitude();
@@ -40,7 +40,7 @@ signals:
 private:
   hmi::PluginManagerInterface* pluginManager_;
   QTimer timer_;
-  double altitude_ = 1000.0;
-  double speed_ = 200.0;
+  double altitude_{};
+  double speed_{};
   QVector<QPair<QTime, double>> altitudes_;
 };
